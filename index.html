@@ -13,92 +13,97 @@
 
 <style>
 *{box-sizing:border-box;font-family:'Inter',sans-serif;}
-
 body{
 margin:0;
-background:#0b0b0c;
-color:#ffffff;
+background:#0c0c0f;
+color:#fff;
 }
 
 .container{
-max-width:1000px;
+max-width:1100px;
 margin:auto;
-padding:50px 20px;
+padding:60px 24px;
 }
 
 h1{
+font-size:34px;
+font-weight:800;
+margin-bottom:40px;
+}
+
+.section{
+margin-bottom:60px;
+}
+
+.line{
+height:1px;
+background:#1f1f25;
+margin:30px 0;
+}
+
+button{
+background:transparent;
+color:white;
+border:1px solid #2a2a30;
+padding:10px 22px;
+border-radius:40px;
+cursor:pointer;
+transition:0.25s;
+}
+
+button:hover{
+background:#ffffff;
+color:#000;
+}
+
+input{
+background:transparent;
+border:none;
+border-bottom:1px solid #2a2a30;
+color:white;
+padding:8px;
+margin:10px 10px 10px 0;
+width:120px;
+outline:none;
+}
+
+input:focus{
+border-bottom:1px solid #ffffff;
+}
+
+.flex{
+display:flex;
+align-items:center;
+justify-content:space-between;
+flex-wrap:wrap;
+gap:20px;
+}
+
+.big-number{
+font-size:42px;
 font-weight:800;
 letter-spacing:1px;
 }
 
-.card{
-background:#141416;
-border:1px solid #222;
-padding:30px;
-border-radius:18px;
-margin-bottom:25px;
-}
-
-.grid{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
-gap:25px;
-}
-
-button{
-background:#ffffff;
-color:#000;
-border:none;
-padding:10px 20px;
-border-radius:25px;
-cursor:pointer;
-font-weight:600;
-transition:0.2s;
-}
-
-button:hover{
-opacity:0.85;
-}
-
-input{
-background:#1c1c1f;
-border:1px solid #2a2a2e;
-color:white;
-padding:10px;
-border-radius:20px;
-margin:5px;
-width:120px;
-}
-
-.timer{
-font-size:28px;
-font-weight:800;
-margin-top:10px;
+.countdown span{
+margin-right:20px;
+font-size:14px;
+opacity:0.7;
 }
 
 .progress{
-height:10px;
-background:#1f1f22;
+height:6px;
+background:#1a1a20;
 border-radius:20px;
+margin-top:20px;
 overflow:hidden;
-margin-top:10px;
 }
 
 .progress-bar{
 height:100%;
-background:#ffffff;
+background:white;
 width:0%;
 transition:0.4s;
-}
-
-.countdown-box{
-display:inline-block;
-margin:5px;
-padding:10px 15px;
-background:#1c1c1f;
-border-radius:12px;
-min-width:60px;
-text-align:center;
 }
 
 .hidden{display:none;}
@@ -110,68 +115,74 @@ text-align:center;
 
 <h1>GÜN AZALIYOR</h1>
 
-<div id="authPanel" class="card">
+<div id="authPanel" class="section">
 <input type="text" id="nameInput" placeholder="İsim">
 <input type="email" id="emailInput" placeholder="Email">
 <input type="password" id="passwordInput" placeholder="Şifre">
-<br>
+<br><br>
 <button onclick="registerUser()">Kayıt</button>
 <button onclick="loginUser()">Giriş</button>
 </div>
 
 <div id="dashboard" class="hidden">
 
-<div class="card">
+<div class="section flex">
+<div>
 <h2 id="welcomeText"></h2>
+</div>
 <button onclick="logoutUser()">Çıkış</button>
 </div>
 
-<div class="grid">
+<div class="line"></div>
 
-<div class="card">
-<h3>YKS Geri Sayım</h3>
-<div>
-<div class="countdown-box"><div id="days">0</div>Gün</div>
-<div class="countdown-box"><div id="hours">0</div>Saat</div>
-<div class="countdown-box"><div id="minutes">0</div>Dakika</div>
-<div class="countdown-box"><div id="seconds">0</div>Saniye</div>
-</div>
-</div>
-
-<div class="card">
-<h3>Kronometre</h3>
-<div class="timer" id="timerDisplay">00:00:00</div>
+<div class="section">
+<div class="big-number" id="timerDisplay">00:00:00</div>
+<br>
 <button onclick="startTimer()">Başlat</button>
 <button onclick="pauseTimer()">Duraklat</button>
 <button onclick="resetTimer()">Sıfırla</button>
 </div>
 
-<div class="card">
-<h3>Net Hesaplama</h3>
+<div class="line"></div>
+
+<div class="section countdown">
+<div>
+<span>Gün <b id="days">0</b></span>
+<span>Saat <b id="hours">0</b></span>
+<span>Dakika <b id="minutes">0</b></span>
+<span>Saniye <b id="seconds">0</b></span>
+</div>
+</div>
+
+<div class="line"></div>
+
+<div class="section flex">
+
+<div>
+<h3>Net</h3>
 <input type="number" id="dogru" placeholder="Doğru">
 <input type="number" id="yanlis" placeholder="Yanlış">
 <button onclick="hesaplaNet()">Hesapla</button>
-<h4 id="netSonuc">Net: 0</h4>
+<p id="netSonuc">0</p>
 </div>
 
-<div class="card">
-<h3>Hedef Net</h3>
+<div>
+<h3>Hedef</h3>
 <input type="number" id="hedefInput" placeholder="Hedef">
 <button onclick="setHedef()">Kaydet</button>
-<h4 id="hedefText">Hedef: -</h4>
-
+<p id="hedefText">-</p>
 <div class="progress">
 <div class="progress-bar" id="progressBar"></div>
 </div>
 </div>
 
 </div>
+
 </div>
 
 </div>
 
 <script>
-/* FIREBASE */
 var firebaseConfig={
 apiKey:"AIzaSyAqyJWpcmvxRKYlXKKJryrYis5uotXXZOI",
 authDomain:"ykssayac-58125.firebaseapp.com",
@@ -181,7 +192,6 @@ firebase.initializeApp(firebaseConfig);
 var auth=firebase.auth();
 var db=firebase.firestore();
 
-/* AUTH */
 function registerUser(){
 auth.createUserWithEmailAndPassword(emailInput.value,passwordInput.value)
 .then(cred=>{
@@ -206,29 +216,15 @@ auth.onAuthStateChanged(user=>{
 if(user){
 authPanel.classList.add("hidden");
 dashboard.classList.remove("hidden");
-
 db.collection("users").doc(user.uid).get().then(doc=>{
-let data=doc.data();
-welcomeText.innerText="Hoş geldin "+data.name;
-hedefText.innerText="Hedef: "+data.hedef;
-currentNet=data.currentNet||0;
-updateProgress(data.hedef,currentNet);
+let d=doc.data();
+welcomeText.innerText="Hoş geldin "+d.name;
+hedefText.innerText=d.hedef;
+currentNet=d.currentNet||0;
+updateProgress(d.hedef,currentNet);
 });
 }
 });
-
-/* COUNTDOWN */
-const target=new Date("June 20, 2026 09:00:00").getTime();
-setInterval(()=>{
-let now=new Date().getTime();
-let diff=target-now;
-if(diff>0){
-days.innerText=Math.floor(diff/(1000*60*60*24));
-hours.innerText=Math.floor((diff%(1000*60*60*24))/(1000*60*60));
-minutes.innerText=Math.floor((diff%(1000*60*60))/(1000*60));
-seconds.innerText=Math.floor((diff%(1000*60))/1000);
-}
-},1000);
 
 /* TIMER */
 let sec=0,interval=null;
@@ -258,19 +254,31 @@ return pad(h)+":"+pad(m)+":"+pad(ss);
 }
 function pad(n){return n<10?"0"+n:n;}
 
+/* COUNTDOWN */
+const target=new Date("June 20, 2026 09:00:00").getTime();
+setInterval(()=>{
+let now=new Date().getTime();
+let diff=target-now;
+if(diff>0){
+days.innerText=Math.floor(diff/(1000*60*60*24));
+hours.innerText=Math.floor((diff%(1000*60*60*24))/(1000*60*60));
+minutes.innerText=Math.floor((diff%(1000*60*60))/(1000*60));
+seconds.innerText=Math.floor((diff%(1000*60))/1000);
+}
+},1000);
+
 /* NET */
 let currentNet=0;
 function hesaplaNet(){
 let d=parseFloat(dogru.value)||0;
 let y=parseFloat(yanlis.value)||0;
 currentNet=d-(y/4);
-netSonuc.innerText="Net: "+currentNet.toFixed(2);
+netSonuc.innerText=currentNet.toFixed(2);
 
 let user=auth.currentUser;
 db.collection("users").doc(user.uid).update({
 currentNet:currentNet
 });
-
 updateProgress(parseFloat(hedefInput.value),currentNet);
 }
 
@@ -278,12 +286,8 @@ updateProgress(parseFloat(hedefInput.value),currentNet);
 function setHedef(){
 let hedef=parseFloat(hedefInput.value)||0;
 let user=auth.currentUser;
-
-db.collection("users").doc(user.uid).update({
-hedef:hedef
-});
-
-hedefText.innerText="Hedef: "+hedef;
+db.collection("users").doc(user.uid).update({hedef:hedef});
+hedefText.innerText=hedef;
 updateProgress(hedef,currentNet);
 }
 
