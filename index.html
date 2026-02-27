@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Gün Azalıyor | 2026 YKS</title>
 
-<!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
@@ -13,42 +12,40 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
 
 <style>
-*{box-sizing:border-box;font-family:'Inter',sans-serif;}
 body{
 margin:0;
-background:linear-gradient(135deg,#3b82f6,#8b5cf6,#ec4899);
+font-family:'Inter',sans-serif;
+background:linear-gradient(135deg,#4f46e5,#06b6d4,#ec4899);
 color:white;
 text-align:center;
 padding:40px;
-min-height:100vh;
 }
 
-h1{font-weight:800;margin-bottom:20px;}
-
 .panel{
-background:rgba(255,255,255,0.12);
+background:rgba(255,255,255,0.15);
 backdrop-filter:blur(15px);
 padding:30px;
 border-radius:20px;
 max-width:900px;
 margin:auto;
+margin-bottom:30px;
 }
 
 .hidden{display:none;}
 
 input{
 padding:12px;
-margin:8px;
+margin:6px;
 border:none;
-border-radius:30px;
-width:220px;
+border-radius:25px;
+width:200px;
 }
 
 button{
 padding:12px 28px;
 margin:6px;
 border:none;
-border-radius:30px;
+border-radius:25px;
 cursor:pointer;
 font-weight:600;
 color:white;
@@ -62,37 +59,29 @@ box-shadow:0 8px 20px rgba(0,0,0,0.3);
 }
 
 .secondary{
-background:linear-gradient(135deg,#f59e0b,#ef4444);
-}
-
-.admin-btn{
-background:linear-gradient(135deg,#0ea5e9,#6366f1);
+background:linear-gradient(135deg,#ef4444,#f97316);
 }
 
 .countdown-box{
 display:inline-block;
 margin:10px;
 padding:15px;
-background:rgba(255,255,255,0.15);
+background:rgba(255,255,255,0.2);
 border-radius:15px;
 min-width:70px;
 }
 
 .timer{
-font-size:36px;
-margin:15px 0;
+font-size:34px;
 font-weight:800;
+margin:15px 0;
 }
 
-table{
-width:100%;
-margin-top:20px;
-border-collapse:collapse;
-}
-
-th,td{
-padding:10px;
-border-bottom:1px solid rgba(255,255,255,0.3);
+.net-box{
+background:rgba(255,255,255,0.2);
+padding:20px;
+border-radius:15px;
+margin-top:15px;
 }
 </style>
 </head>
@@ -102,19 +91,22 @@ border-bottom:1px solid rgba(255,255,255,0.3);
 
 <!-- AUTH -->
 <div id="authPanel" class="panel">
+<input type="text" id="nameInput" placeholder="İsmin">
 <input type="email" id="emailInput" placeholder="Email">
 <input type="password" id="passwordInput" placeholder="Şifre"><br>
 <button onclick="registerUser()">Kayıt Ol</button>
 <button onclick="loginUser()">Giriş Yap</button>
-<button class="admin-btn" onclick="adminLogin()">Admin</button>
 </div>
 
 <!-- DASHBOARD -->
-<div id="dashboardPanel" class="panel hidden">
+<div id="dashboardPanel" class="hidden">
 
+<div class="panel">
 <h2 id="welcomeText"></h2>
 <button class="secondary" onclick="logoutUser()">Çıkış</button>
+</div>
 
+<div class="panel">
 <h3>2026 YKS Geri Sayım</h3>
 <div>
 <div class="countdown-box"><div id="days">0</div>Gün</div>
@@ -122,7 +114,9 @@ border-bottom:1px solid rgba(255,255,255,0.3);
 <div class="countdown-box"><div id="minutes">0</div>Dakika</div>
 <div class="countdown-box"><div id="seconds">0</div>Saniye</div>
 </div>
+</div>
 
+<div class="panel">
 <h3>Kronometre</h3>
 <div class="timer" id="timerDisplay">00:00:00</div>
 <button onclick="startTimer()">Başlat</button>
@@ -131,24 +125,23 @@ border-bottom:1px solid rgba(255,255,255,0.3);
 
 <h3>Bugün Toplam</h3>
 <div class="timer" id="dailyDisplay">0 dk</div>
-
 </div>
 
-<!-- ADMIN -->
-<div id="adminPanel" class="panel hidden">
-<h2>Admin Panel</h2>
-<button class="secondary" onclick="logoutUser()">Çıkış</button>
-<table>
-<thead>
-<tr><th>Email</th><th>Veriler</th></tr>
-</thead>
-<tbody id="adminTable"></tbody>
-</table>
+<div class="panel">
+<h3>Net Hesaplama</h3>
+<div class="net-box">
+<input type="number" id="dogru" placeholder="Doğru">
+<input type="number" id="yanlis" placeholder="Yanlış">
+<button onclick="hesaplaNet()">Hesapla</button>
+<h3 id="netSonuc">Net: 0</h3>
+</div>
+</div>
+
 </div>
 
 <script>
 
-/* FIREBASE CONFIG */
+/* FIREBASE */
 var firebaseConfig = {
   apiKey: "AIzaSyAqyJWpcmvxRKYlXKKJryrYis5uotXXZOI",
   authDomain: "ykssayac-58125.firebaseapp.com",
@@ -166,7 +159,12 @@ var db = firebase.firestore();
 function registerUser(){
 firebaseAuth.createUserWithEmailAndPassword(
 emailInput.value,passwordInput.value
-).catch(e=>alert(e.message));
+).then(cred=>{
+db.collection("users").doc(cred.user.uid).set({
+name:nameInput.value,
+email:emailInput.value
+});
+}).catch(e=>alert(e.message));
 }
 
 function loginUser(){
@@ -180,44 +178,42 @@ firebaseAuth.signOut();
 location.reload();
 }
 
-function adminLogin(){
-if(prompt("Admin şifre:")==="admin123"){
-showAdminPanel();
-}
-}
-
 firebaseAuth.onAuthStateChanged(user=>{
 if(user){
 authPanel.classList.add("hidden");
 dashboardPanel.classList.remove("hidden");
-welcomeText.innerText="Hoş geldin "+user.email;
-}else{
-authPanel.classList.remove("hidden");
-dashboardPanel.classList.add("hidden");
+
+db.collection("users").doc(user.uid).get().then(doc=>{
+welcomeText.innerText="Hoş geldin "+doc.data().name;
+});
 }
 });
 
 /* COUNTDOWN */
 const targetDate=new Date("June 20, 2026 09:00:00").getTime();
+
 setInterval(()=>{
 const now=new Date().getTime();
 const diff=targetDate-now;
+
+if(diff>0){
 days.innerText=Math.floor(diff/(1000*60*60*24));
 hours.innerText=Math.floor((diff%(1000*60*60*24))/(1000*60*60));
 minutes.innerText=Math.floor((diff%(1000*60*60))/(1000*60));
 seconds.innerText=Math.floor((diff%(1000*60))/1000);
+}
 },1000);
 
 /* TIMER */
-let seconds=0;
+let secondsCount=0;
 let timerInterval=null;
 let dailyMinutes=0;
 
 function startTimer(){
 if(!timerInterval){
 timerInterval=setInterval(()=>{
-seconds++;
-timerDisplay.innerText=formatTime(seconds);
+secondsCount++;
+timerDisplay.innerText=formatTime(secondsCount);
 },1000);
 }
 }
@@ -226,18 +222,15 @@ function pauseTimer(){
 if(timerInterval){
 clearInterval(timerInterval);
 timerInterval=null;
-
-dailyMinutes+=Math.floor(seconds/60);
-saveDailyToFirebase(dailyMinutes);
-
-timerDisplay.innerText=formatTime(seconds);
+dailyMinutes+=Math.floor(secondsCount/60);
+dailyDisplay.innerText=dailyMinutes+" dk";
 }
 }
 
 function resetTimer(){
 clearInterval(timerInterval);
 timerInterval=null;
-seconds=0;
+secondsCount=0;
 timerDisplay.innerText="00:00:00";
 }
 
@@ -249,32 +242,12 @@ return pad(h)+":"+pad(m)+":"+pad(s);
 }
 function pad(n){return n<10?"0"+n:n;}
 
-function saveDailyToFirebase(min){
-var user=firebaseAuth.currentUser;
-if(!user) return;
-var today=new Date().toISOString().slice(0,10);
-
-db.collection("users").doc(user.uid).set({
-email:user.email,
-[today]:min
-},{merge:true});
-
-dailyDisplay.innerText=min+" dk";
-}
-
-/* ADMIN */
-function showAdminPanel(){
-authPanel.classList.add("hidden");
-dashboardPanel.classList.add("hidden");
-adminPanel.classList.remove("hidden");
-
-db.collection("users").get().then(snapshot=>{
-adminTable.innerHTML="";
-snapshot.forEach(doc=>{
-adminTable.innerHTML+=
-"<tr><td>"+doc.data().email+"</td><td>"+JSON.stringify(doc.data())+"</td></tr>";
-});
-});
+/* NET HESAPLAMA */
+function hesaplaNet(){
+let dogru=parseFloat(document.getElementById("dogru").value)||0;
+let yanlis=parseFloat(document.getElementById("yanlis").value)||0;
+let net=dogru-(yanlis/4);
+netSonuc.innerText="Net: "+net.toFixed(2);
 }
 
 </script>
