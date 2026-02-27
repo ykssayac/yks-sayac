@@ -5,51 +5,93 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Gün Azalıyor | 2026 YKS</title>
 
-<!-- Firebase CDN -->
+<!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
 
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+
 <style>
+*{box-sizing:border-box;font-family:'Inter',sans-serif;}
 body{
-font-family:Arial;
-background:#0f172a;
+margin:0;
+background:linear-gradient(135deg,#3b82f6,#8b5cf6,#ec4899);
 color:white;
 text-align:center;
 padding:40px;
+min-height:100vh;
 }
-input,button{
-padding:10px;
-margin:6px;
+
+h1{font-weight:800;margin-bottom:20px;}
+
+.panel{
+background:rgba(255,255,255,0.12);
+backdrop-filter:blur(15px);
+padding:30px;
 border-radius:20px;
-border:none;
+max-width:900px;
+margin:auto;
 }
-button{
-background:#22c55e;
-color:white;
-cursor:pointer;
-}
+
 .hidden{display:none;}
-.box{
+
+input{
+padding:12px;
+margin:8px;
+border:none;
+border-radius:30px;
+width:220px;
+}
+
+button{
+padding:12px 28px;
+margin:6px;
+border:none;
+border-radius:30px;
+cursor:pointer;
+font-weight:600;
+color:white;
+background:linear-gradient(135deg,#22c55e,#16a34a);
+transition:0.3s;
+}
+
+button:hover{
+transform:translateY(-3px);
+box-shadow:0 8px 20px rgba(0,0,0,0.3);
+}
+
+.secondary{
+background:linear-gradient(135deg,#f59e0b,#ef4444);
+}
+
+.admin-btn{
+background:linear-gradient(135deg,#0ea5e9,#6366f1);
+}
+
+.countdown-box{
 display:inline-block;
 margin:10px;
 padding:15px;
-background:#1e293b;
-border-radius:10px;
+background:rgba(255,255,255,0.15);
+border-radius:15px;
 min-width:70px;
 }
+
 .timer{
-font-size:28px;
+font-size:36px;
 margin:15px 0;
+font-weight:800;
 }
+
 table{
-margin:20px auto;
+width:100%;
+margin-top:20px;
 border-collapse:collapse;
-width:90%;
-max-width:600px;
 }
+
 th,td{
-padding:8px;
+padding:10px;
 border-bottom:1px solid rgba(255,255,255,0.3);
 }
 </style>
@@ -58,33 +100,33 @@ border-bottom:1px solid rgba(255,255,255,0.3);
 
 <h1>GÜN AZALIYOR</h1>
 
-<!-- AUTH PANEL -->
-<div id="authPanel">
+<!-- AUTH -->
+<div id="authPanel" class="panel">
 <input type="email" id="emailInput" placeholder="Email">
 <input type="password" id="passwordInput" placeholder="Şifre"><br>
 <button onclick="registerUser()">Kayıt Ol</button>
 <button onclick="loginUser()">Giriş Yap</button>
-<button onclick="adminLogin()">Admin</button>
+<button class="admin-btn" onclick="adminLogin()">Admin</button>
 </div>
 
-<!-- USER DASHBOARD -->
-<div id="dashboardPanel" class="hidden">
+<!-- DASHBOARD -->
+<div id="dashboardPanel" class="panel hidden">
 
 <h2 id="welcomeText"></h2>
-<button onclick="logoutUser()">Çıkış</button>
+<button class="secondary" onclick="logoutUser()">Çıkış</button>
 
 <h3>2026 YKS Geri Sayım</h3>
 <div>
-<div class="box"><div id="days">0</div>Gün</div>
-<div class="box"><div id="hours">0</div>Saat</div>
-<div class="box"><div id="minutes">0</div>Dakika</div>
-<div class="box"><div id="seconds">0</div>Saniye</div>
+<div class="countdown-box"><div id="days">0</div>Gün</div>
+<div class="countdown-box"><div id="hours">0</div>Saat</div>
+<div class="countdown-box"><div id="minutes">0</div>Dakika</div>
+<div class="countdown-box"><div id="seconds">0</div>Saniye</div>
 </div>
 
 <h3>Kronometre</h3>
 <div class="timer" id="timerDisplay">00:00:00</div>
 <button onclick="startTimer()">Başlat</button>
-<button onclick="pauseTimer()">Duraklat</button>
+<button class="secondary" onclick="pauseTimer()">Duraklat</button>
 <button onclick="resetTimer()">Sıfırla</button>
 
 <h3>Bugün Toplam</h3>
@@ -92,13 +134,13 @@ border-bottom:1px solid rgba(255,255,255,0.3);
 
 </div>
 
-<!-- ADMIN PANEL -->
-<div id="adminPanel" class="hidden">
+<!-- ADMIN -->
+<div id="adminPanel" class="panel hidden">
 <h2>Admin Panel</h2>
-<button onclick="logoutUser()">Çıkış</button>
+<button class="secondary" onclick="logoutUser()">Çıkış</button>
 <table>
 <thead>
-<tr><th>Email</th><th>Veri</th></tr>
+<tr><th>Email</th><th>Veriler</th></tr>
 </thead>
 <tbody id="adminTable"></tbody>
 </table>
@@ -117,23 +159,19 @@ var firebaseConfig = {
 };
 
 firebase.initializeApp(firebaseConfig);
-
 var firebaseAuth = firebase.auth();
 var db = firebase.firestore();
 
-/* AUTH FUNCTIONS */
-
+/* AUTH */
 function registerUser(){
 firebaseAuth.createUserWithEmailAndPassword(
-document.getElementById("emailInput").value,
-document.getElementById("passwordInput").value
+emailInput.value,passwordInput.value
 ).catch(e=>alert(e.message));
 }
 
 function loginUser(){
 firebaseAuth.signInWithEmailAndPassword(
-document.getElementById("emailInput").value,
-document.getElementById("passwordInput").value
+emailInput.value,passwordInput.value
 ).catch(e=>alert(e.message));
 }
 
@@ -148,15 +186,14 @@ showAdminPanel();
 }
 }
 
-/* AUTH STATE */
-firebaseAuth.onAuthStateChanged(function(user){
+firebaseAuth.onAuthStateChanged(user=>{
 if(user){
-document.getElementById("authPanel").classList.add("hidden");
-document.getElementById("dashboardPanel").classList.remove("hidden");
-document.getElementById("welcomeText").innerText="Hoş geldin "+user.email;
+authPanel.classList.add("hidden");
+dashboardPanel.classList.remove("hidden");
+welcomeText.innerText="Hoş geldin "+user.email;
 }else{
-document.getElementById("authPanel").classList.remove("hidden");
-document.getElementById("dashboardPanel").classList.add("hidden");
+authPanel.classList.remove("hidden");
+dashboardPanel.classList.add("hidden");
 }
 });
 
@@ -165,10 +202,10 @@ const targetDate=new Date("June 20, 2026 09:00:00").getTime();
 setInterval(()=>{
 const now=new Date().getTime();
 const diff=targetDate-now;
-document.getElementById("days").innerText=Math.floor(diff/(1000*60*60*24));
-document.getElementById("hours").innerText=Math.floor((diff%(1000*60*60*24))/(1000*60*60));
-document.getElementById("minutes").innerText=Math.floor((diff%(1000*60*60))/(1000*60));
-document.getElementById("seconds").innerText=Math.floor((diff%(1000*60))/1000);
+days.innerText=Math.floor(diff/(1000*60*60*24));
+hours.innerText=Math.floor((diff%(1000*60*60*24))/(1000*60*60));
+minutes.innerText=Math.floor((diff%(1000*60*60))/(1000*60));
+seconds.innerText=Math.floor((diff%(1000*60))/1000);
 },1000);
 
 /* TIMER */
@@ -180,7 +217,7 @@ function startTimer(){
 if(!timerInterval){
 timerInterval=setInterval(()=>{
 seconds++;
-document.getElementById("timerDisplay").innerText=formatTime(seconds);
+timerDisplay.innerText=formatTime(seconds);
 },1000);
 }
 }
@@ -193,8 +230,7 @@ timerInterval=null;
 dailyMinutes+=Math.floor(seconds/60);
 saveDailyToFirebase(dailyMinutes);
 
-seconds=0;
-document.getElementById("timerDisplay").innerText="00:00:00";
+timerDisplay.innerText=formatTime(seconds);
 }
 }
 
@@ -202,7 +238,7 @@ function resetTimer(){
 clearInterval(timerInterval);
 timerInterval=null;
 seconds=0;
-document.getElementById("timerDisplay").innerText="00:00:00";
+timerDisplay.innerText="00:00:00";
 }
 
 function formatTime(sec){
@@ -216,7 +252,6 @@ function pad(n){return n<10?"0"+n:n;}
 function saveDailyToFirebase(min){
 var user=firebaseAuth.currentUser;
 if(!user) return;
-
 var today=new Date().toISOString().slice(0,10);
 
 db.collection("users").doc(user.uid).set({
@@ -224,20 +259,19 @@ email:user.email,
 [today]:min
 },{merge:true});
 
-document.getElementById("dailyDisplay").innerText=min+" dk";
+dailyDisplay.innerText=min+" dk";
 }
 
-/* ADMIN PANEL */
+/* ADMIN */
 function showAdminPanel(){
-document.getElementById("authPanel").classList.add("hidden");
-document.getElementById("dashboardPanel").classList.add("hidden");
-document.getElementById("adminPanel").classList.remove("hidden");
+authPanel.classList.add("hidden");
+dashboardPanel.classList.add("hidden");
+adminPanel.classList.remove("hidden");
 
 db.collection("users").get().then(snapshot=>{
-let table=document.getElementById("adminTable");
-table.innerHTML="";
+adminTable.innerHTML="";
 snapshot.forEach(doc=>{
-table.innerHTML+=
+adminTable.innerHTML+=
 "<tr><td>"+doc.data().email+"</td><td>"+JSON.stringify(doc.data())+"</td></tr>";
 });
 });
