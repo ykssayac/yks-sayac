@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Gün Azalıyor | 2026 YKS</title>
+<title>Gün Azalıyor | Premium</title>
 
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
@@ -12,102 +12,122 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
 
 <style>
+*{box-sizing:border-box;font-family:'Inter',sans-serif;}
 body{
 margin:0;
-font-family:'Inter',sans-serif;
-background:linear-gradient(135deg,#4f46e5,#06b6d4,#ec4899);
+background:#0f172a;
 color:white;
-text-align:center;
-padding:40px;
 }
 
-.panel{
-background:rgba(255,255,255,0.15);
-backdrop-filter:blur(15px);
-padding:30px;
-border-radius:20px;
-max-width:900px;
+.container{
+max-width:1100px;
 margin:auto;
-margin-bottom:30px;
+padding:40px 20px;
 }
 
-.hidden{display:none;}
+.header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:40px;
+}
 
-input{
-padding:12px;
-margin:6px;
-border:none;
-border-radius:25px;
-width:200px;
+.card{
+background:#1e293b;
+padding:25px;
+border-radius:20px;
+box-shadow:0 10px 30px rgba(0,0,0,0.4);
+margin-bottom:25px;
+}
+
+.grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+gap:25px;
 }
 
 button{
-padding:12px 28px;
-margin:6px;
+padding:10px 22px;
 border:none;
 border-radius:25px;
 cursor:pointer;
 font-weight:600;
+background:#3b82f6;
 color:white;
-background:linear-gradient(135deg,#22c55e,#16a34a);
 transition:0.3s;
 }
 
 button:hover{
-transform:translateY(-3px);
-box-shadow:0 8px 20px rgba(0,0,0,0.3);
+background:#2563eb;
+transform:translateY(-2px);
 }
 
-.secondary{
-background:linear-gradient(135deg,#ef4444,#f97316);
-}
-
-.countdown-box{
-display:inline-block;
-margin:10px;
-padding:15px;
-background:rgba(255,255,255,0.2);
-border-radius:15px;
-min-width:70px;
+input{
+padding:10px;
+border-radius:20px;
+border:none;
+margin:6px;
+width:120px;
 }
 
 .timer{
-font-size:34px;
+font-size:32px;
 font-weight:800;
-margin:15px 0;
+margin:10px 0;
 }
 
-.net-box{
-background:rgba(255,255,255,0.2);
-padding:20px;
-border-radius:15px;
-margin-top:15px;
+.progress{
+height:12px;
+background:#334155;
+border-radius:20px;
+overflow:hidden;
+margin-top:10px;
+}
+
+.progress-bar{
+height:100%;
+background:#22c55e;
+width:0%;
+transition:0.4s;
+}
+
+.hidden{display:none;}
+
+.countdown-box{
+display:inline-block;
+margin:5px;
+padding:10px 15px;
+background:#334155;
+border-radius:12px;
+min-width:60px;
+text-align:center;
 }
 </style>
 </head>
 <body>
 
-<h1>GÜN AZALIYOR</h1>
+<div class="container">
 
-<!-- AUTH -->
-<div id="authPanel" class="panel">
+<div id="authPanel" class="card">
+<h2>Giriş</h2>
 <input type="text" id="nameInput" placeholder="İsmin">
 <input type="email" id="emailInput" placeholder="Email">
 <input type="password" id="passwordInput" placeholder="Şifre"><br>
-<button onclick="registerUser()">Kayıt Ol</button>
-<button onclick="loginUser()">Giriş Yap</button>
+<button onclick="registerUser()">Kayıt</button>
+<button onclick="loginUser()">Giriş</button>
 </div>
 
-<!-- DASHBOARD -->
-<div id="dashboardPanel" class="hidden">
+<div id="dashboard" class="hidden">
 
-<div class="panel">
+<div class="header">
 <h2 id="welcomeText"></h2>
-<button class="secondary" onclick="logoutUser()">Çıkış</button>
+<button onclick="logoutUser()">Çıkış</button>
 </div>
 
-<div class="panel">
-<h3>2026 YKS Geri Sayım</h3>
+<div class="grid">
+
+<div class="card">
+<h3>YKS Geri Sayım</h3>
 <div>
 <div class="countdown-box"><div id="days">0</div>Gün</div>
 <div class="countdown-box"><div id="hours">0</div>Saat</div>
@@ -116,86 +136,85 @@ margin-top:15px;
 </div>
 </div>
 
-<div class="panel">
+<div class="card">
 <h3>Kronometre</h3>
 <div class="timer" id="timerDisplay">00:00:00</div>
 <button onclick="startTimer()">Başlat</button>
-<button class="secondary" onclick="pauseTimer()">Duraklat</button>
+<button onclick="pauseTimer()">Duraklat</button>
 <button onclick="resetTimer()">Sıfırla</button>
-
-<h3>Bugün Toplam</h3>
-<div class="timer" id="dailyDisplay">0 dk</div>
 </div>
 
-<div class="panel">
+<div class="card">
 <h3>Net Hesaplama</h3>
-<div class="net-box">
 <input type="number" id="dogru" placeholder="Doğru">
 <input type="number" id="yanlis" placeholder="Yanlış">
 <button onclick="hesaplaNet()">Hesapla</button>
-<h3 id="netSonuc">Net: 0</h3>
+<h4 id="netSonuc">Net: 0</h4>
+</div>
+
+<div class="card">
+<h3>Hedef Net</h3>
+<input type="number" id="hedefInput" placeholder="Hedef">
+<button onclick="setHedef()">Kaydet</button>
+<h4 id="hedefText">Hedef: -</h4>
+
+<div class="progress">
+<div class="progress-bar" id="progressBar"></div>
+</div>
+</div>
+
 </div>
 </div>
 
 </div>
 
 <script>
-
 /* FIREBASE */
-var firebaseConfig = {
-  apiKey: "AIzaSyAqyJWpcmvxRKYlXKKJryrYis5uotXXZOI",
-  authDomain: "ykssayac-58125.firebaseapp.com",
-  projectId: "ykssayac-58125",
-  storageBucket: "ykssayac-58125.firebasestorage.app",
-  messagingSenderId: "56392190567",
-  appId: "1:56392190567:web:af1595285ad06b495322c2"
+var firebaseConfig={
+apiKey:"AIzaSyAqyJWpcmvxRKYlXKKJryrYis5uotXXZOI",
+authDomain:"ykssayac-58125.firebaseapp.com",
+projectId:"ykssayac-58125"
 };
-
 firebase.initializeApp(firebaseConfig);
-var firebaseAuth = firebase.auth();
-var db = firebase.firestore();
+var auth=firebase.auth();
+var db=firebase.firestore();
 
 /* AUTH */
 function registerUser(){
-firebaseAuth.createUserWithEmailAndPassword(
-emailInput.value,passwordInput.value
-).then(cred=>{
+auth.createUserWithEmailAndPassword(emailInput.value,passwordInput.value)
+.then(cred=>{
 db.collection("users").doc(cred.user.uid).set({
 name:nameInput.value,
-email:emailInput.value
+hedef:0
 });
-}).catch(e=>alert(e.message));
+});
 }
 
 function loginUser(){
-firebaseAuth.signInWithEmailAndPassword(
-emailInput.value,passwordInput.value
-).catch(e=>alert(e.message));
+auth.signInWithEmailAndPassword(emailInput.value,passwordInput.value);
 }
 
 function logoutUser(){
-firebaseAuth.signOut();
+auth.signOut();
 location.reload();
 }
 
-firebaseAuth.onAuthStateChanged(user=>{
+auth.onAuthStateChanged(user=>{
 if(user){
 authPanel.classList.add("hidden");
-dashboardPanel.classList.remove("hidden");
-
+dashboard.classList.remove("hidden");
 db.collection("users").doc(user.uid).get().then(doc=>{
 welcomeText.innerText="Hoş geldin "+doc.data().name;
+hedefText.innerText="Hedef: "+doc.data().hedef;
 });
 }
 });
 
 /* COUNTDOWN */
-const targetDate=new Date("June 20, 2026 09:00:00").getTime();
-
+const target=new Date("June 20, 2026 09:00:00").getTime();
 setInterval(()=>{
-const now=new Date().getTime();
-const diff=targetDate-now;
-
+let now=new Date().getTime();
+let diff=target-now;
 if(diff>0){
 days.innerText=Math.floor(diff/(1000*60*60*24));
 hours.innerText=Math.floor((diff%(1000*60*60*24))/(1000*60*60));
@@ -205,51 +224,59 @@ seconds.innerText=Math.floor((diff%(1000*60))/1000);
 },1000);
 
 /* TIMER */
-let secondsCount=0;
-let timerInterval=null;
-let dailyMinutes=0;
-
+let sec=0,interval=null;
 function startTimer(){
-if(!timerInterval){
-timerInterval=setInterval(()=>{
-secondsCount++;
-timerDisplay.innerText=formatTime(secondsCount);
+if(!interval){
+interval=setInterval(()=>{
+sec++;
+timerDisplay.innerText=format(sec);
 },1000);
 }
 }
-
 function pauseTimer(){
-if(timerInterval){
-clearInterval(timerInterval);
-timerInterval=null;
-dailyMinutes+=Math.floor(secondsCount/60);
-dailyDisplay.innerText=dailyMinutes+" dk";
+clearInterval(interval);
+interval=null;
 }
-}
-
 function resetTimer(){
-clearInterval(timerInterval);
-timerInterval=null;
-secondsCount=0;
+clearInterval(interval);
+interval=null;
+sec=0;
 timerDisplay.innerText="00:00:00";
 }
-
-function formatTime(sec){
-let h=Math.floor(sec/3600);
-let m=Math.floor((sec%3600)/60);
-let s=sec%60;
-return pad(h)+":"+pad(m)+":"+pad(s);
+function format(s){
+let h=Math.floor(s/3600);
+let m=Math.floor((s%3600)/60);
+let ss=s%60;
+return pad(h)+":"+pad(m)+":"+pad(ss);
 }
 function pad(n){return n<10?"0"+n:n;}
 
-/* NET HESAPLAMA */
+/* NET */
+let currentNet=0;
 function hesaplaNet(){
-let dogru=parseFloat(document.getElementById("dogru").value)||0;
-let yanlis=parseFloat(document.getElementById("yanlis").value)||0;
-let net=dogru-(yanlis/4);
-netSonuc.innerText="Net: "+net.toFixed(2);
+let d=parseFloat(dogru.value)||0;
+let y=parseFloat(yanlis.value)||0;
+currentNet=d-(y/4);
+netSonuc.innerText="Net: "+currentNet.toFixed(2);
+updateProgress();
 }
 
+/* HEDEF */
+function setHedef(){
+let hedef=parseFloat(hedefInput.value)||0;
+let user=auth.currentUser;
+db.collection("users").doc(user.uid).update({hedef:hedef});
+hedefText.innerText="Hedef: "+hedef;
+updateProgress();
+}
+
+function updateProgress(){
+let hedef=parseFloat(hedefInput.value)||0;
+if(hedef>0){
+let percent=(currentNet/hedef)*100;
+progressBar.style.width=Math.min(percent,100)+"%";
+}
+}
 </script>
 
 </body>
