@@ -3,86 +3,80 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Gün Azalıyor | Admin Sistem</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+<title>Gün Azalıyor | Firebase Sistem</title>
+
+<!-- Firebase v8 CDN -->
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif;}
 body{
-min-height:100vh;
-background:linear-gradient(-45deg,#0f172a,#1e293b,#0ea5e9,#9333ea);
-background-size:400% 400%;
-animation:gradient 15s ease infinite;
+font-family:Arial;
+background:#0f172a;
 color:white;
-display:flex;
-align-items:center;
-justify-content:center;
-}
-@keyframes gradient{
-0%{background-position:0% 50%;}
-50%{background-position:100% 50%;}
-100%{background-position:0% 50%;}
-}
-.hidden{display:none;}
-.card{
-background:rgba(255,255,255,0.08);
-backdrop-filter:blur(20px);
-padding:40px;
-border-radius:25px;
-width:95%;
-max-width:900px;
 text-align:center;
+padding:40px;
 }
-input{
-padding:12px;
-width:100%;
-margin:10px 0;
+input,button{
+padding:10px;
+margin:8px;
+border-radius:20px;
 border:none;
-border-radius:30px;
 }
 button{
-padding:12px 25px;
-margin:8px;
-border:none;
-border-radius:30px;
-cursor:pointer;
-font-weight:600;
-background:linear-gradient(135deg,#22c55e,#16a34a);
+background:#22c55e;
 color:white;
+cursor:pointer;
 }
+.hidden{display:none;}
 table{
-width:100%;
-margin-top:20px;
+margin:20px auto;
 border-collapse:collapse;
+width:90%;
+max-width:600px;
 }
 th,td{
 padding:10px;
-border-bottom:1px solid rgba(255,255,255,0.2);
+border-bottom:1px solid rgba(255,255,255,0.3);
 }
 </style>
 </head>
 <body>
 
-<div class="card" id="authCard">
 <h1>GÜN AZALIYOR</h1>
-<input type="text" id="username" placeholder="Kullanıcı adı">
+
+<!-- AUTH PANEL -->
+<div id="auth">
+<h2>Kayıt / Giriş</h2>
+<input type="email" id="email" placeholder="Email">
+<input type="password" id="password" placeholder="Şifre"><br>
+<button onclick="register()">Kayıt Ol</button>
 <button onclick="login()">Giriş Yap</button>
 <button onclick="adminLogin()">Admin Girişi</button>
 </div>
 
-<div class="card hidden" id="dashboard">
-<h1 id="welcomeText"></h1>
+<!-- USER DASHBOARD -->
+<div id="dashboard" class="hidden">
+<h2 id="welcome"></h2>
 <button onclick="logout()">Çıkış</button>
-<p>Bugün çalışmaya devam et.</p>
+
+<h3>Bugün Çalışma Süresi (Dakika)</h3>
+<input type="number" id="minutes">
+<button onclick="saveStudy()">Kaydet</button>
+
+<p id="status"></p>
 </div>
 
-<div class="card hidden" id="adminPanel">
-<h1>Admin Panel</h1>
+<!-- ADMIN PANEL -->
+<div id="adminPanel" class="hidden">
+<h2>Admin Panel</h2>
 <button onclick="logout()">Çıkış</button>
 <table>
 <thead>
 <tr>
-<th>Kullanıcı</th>
-<th>Kayıtlı Veri Anahtarları</th>
+<th>Email</th>
+<th>Veriler</th>
 </tr>
 </thead>
 <tbody id="adminTable"></tbody>
@@ -90,54 +84,98 @@ border-bottom:1px solid rgba(255,255,255,0.2);
 </div>
 
 <script>
-function login(){
-const username=document.getElementById("username").value;
-if(username.trim()!==""){
-localStorage.setItem("user",username);
-showDashboard();
-}
+
+// FIREBASE CONFIG (SENİN PROJEN)
+var firebaseConfig = {
+  apiKey: "AIzaSyAqyJWpcmvxRKYlXKKJryrYis5uotXXZOI",
+  authDomain: "ykssayac-58125.firebaseapp.com",
+  projectId: "ykssayac-58125",
+  storageBucket: "ykssayac-58125.firebasestorage.app",
+  messagingSenderId: "56392190567",
+  appId: "1:56392190567:web:af1595285ad06b495322c2",
+  measurementId: "G-C5DKK1XX5E"
+};
+
+firebase.initializeApp(firebaseConfig);
+
+var auth = firebase.auth();
+var db = firebase.firestore();
+
+/* REGISTER */
+function register(){
+var email=document.getElementById("email").value;
+var password=document.getElementById("password").value;
+auth.createUserWithEmailAndPassword(email,password)
+.catch(e=>alert(e.message));
 }
 
+/* LOGIN */
+function login(){
+var email=document.getElementById("email").value;
+var password=document.getElementById("password").value;
+auth.signInWithEmailAndPassword(email,password)
+.catch(e=>alert(e.message));
+}
+
+/* ADMIN LOGIN */
 function adminLogin(){
-const pass=prompt("Admin şifre:");
+var pass=prompt("Admin şifre:");
 if(pass==="admin123"){
 showAdmin();
 }
 }
 
+/* LOGOUT */
 function logout(){
-localStorage.removeItem("user");
+auth.signOut();
 location.reload();
 }
 
-function showDashboard(){
-document.getElementById("authCard").classList.add("hidden");
+/* SAVE STUDY */
+function saveStudy(){
+var user=auth.currentUser;
+if(!user) return;
+
+var minutes=parseInt(document.getElementById("minutes").value);
+var today=new Date().toISOString().slice(0,10);
+
+db.collection("users").doc(user.uid).set({
+email:user.email,
+[today]:minutes
+},{merge:true});
+
+document.getElementById("status").innerText="Kaydedildi!";
+}
+
+/* AUTH STATE */
+auth.onAuthStateChanged(function(user){
+if(user){
+document.getElementById("auth").classList.add("hidden");
 document.getElementById("dashboard").classList.remove("hidden");
-document.getElementById("welcomeText").innerText=
-"Hoş geldin, "+localStorage.getItem("user");
+document.getElementById("welcome").innerText="Hoş geldin "+user.email;
+}else{
+document.getElementById("auth").classList.remove("hidden");
+document.getElementById("dashboard").classList.add("hidden");
 }
+});
 
+/* ADMIN PANEL LOAD */
 function showAdmin(){
-document.getElementById("authCard").classList.add("hidden");
+document.getElementById("auth").classList.add("hidden");
+document.getElementById("dashboard").classList.add("hidden");
 document.getElementById("adminPanel").classList.remove("hidden");
-loadAdminData();
-}
 
-function loadAdminData(){
-let table=document.getElementById("adminTable");
+db.collection("users").get().then(snapshot=>{
+var table=document.getElementById("adminTable");
 table.innerHTML="";
-for(let i=0;i<localStorage.length;i++){
-let key=localStorage.key(i);
-if(key.startsWith("study-")){
-let row="<tr><td>"+key.split("-")[1]+"</td><td>"+key+"</td></tr>";
+snapshot.forEach(doc=>{
+var data=doc.data();
+var row="<tr><td>"+data.email+"</td><td>"+JSON.stringify(data)+"</td></tr>";
 table.innerHTML+=row;
-}
-}
+});
+});
 }
 
-if(localStorage.getItem("user")){
-showDashboard();
-}
 </script>
 
 </body>
