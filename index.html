@@ -3,20 +3,21 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Gün Azalıyor | 2026 YKS Geri Sayım</title>
-<meta name="description" content="2026 YKS geri sayım sayacı ve çalışma takip sistemi.">
-
+<title>Gün Azalıyor | 2026 YKS</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif;}
 
 body{
+min-height:100vh;
 color:white;
 background:linear-gradient(-45deg,#0f172a,#1e293b,#0ea5e9,#9333ea);
 background-size:400% 400%;
 animation:gradient 15s ease infinite;
+display:flex;
+align-items:center;
+justify-content:center;
 }
 
 @keyframes gradient{
@@ -25,173 +26,133 @@ animation:gradient 15s ease infinite;
 100%{background-position:0% 50%;}
 }
 
-.container{
-max-width:1100px;
-margin:auto;
-padding:60px 20px;
+.hidden{display:none;}
+
+.card{
+background:rgba(255,255,255,0.08);
+backdrop-filter:blur(20px);
+padding:40px;
+border-radius:25px;
+width:95%;
+max-width:900px;
 text-align:center;
+box-shadow:0 0 30px rgba(0,0,0,0.5);
 }
 
-.logo{
-font-size:42px;
-font-weight:800;
-letter-spacing:2px;
-}
-
-.tagline{
+input{
+padding:12px;
+width:100%;
 margin-top:10px;
-opacity:0.8;
-font-size:18px;
+border:none;
+border-radius:30px;
 }
+
+button{
+padding:12px 25px;
+margin:8px;
+border:none;
+border-radius:30px;
+cursor:pointer;
+font-weight:600;
+background:linear-gradient(135deg,#22c55e,#16a34a);
+color:white;
+transition:0.3s;
+}
+
+button:hover{transform:translateY(-3px);}
 
 .countdown{
-margin-top:60px;
+margin-top:40px;
 display:flex;
 justify-content:center;
-gap:25px;
+gap:20px;
 flex-wrap:wrap;
 }
 
 .box{
 background:rgba(255,255,255,0.08);
-backdrop-filter:blur(15px);
-padding:30px;
+padding:25px;
 border-radius:20px;
-width:180px;
-box-shadow:0 0 25px rgba(0,0,0,0.4);
-transition:0.3s;
+width:150px;
 }
 
-.box:hover{
-transform:translateY(-6px);
-box-shadow:0 0 40px rgba(255,255,255,0.3);
-}
+.number{font-size:32px;font-weight:800;}
+.timer-display{font-size:40px;margin:20px 0;}
 
-.number{
-font-size:48px;
-font-weight:800;
-}
-
-.label{
-opacity:0.7;
-}
-
-.section{
-margin-top:70px;
-background:rgba(255,255,255,0.08);
-padding:40px;
-border-radius:25px;
-}
-
-/* TIMER */
-.timer-display{
-font-size:48px;
-margin-bottom:20px;
-}
-
-/* MODERN BUTTONS */
-button{
-padding:14px 30px;
-margin:8px;
-border:none;
-border-radius:50px;
-cursor:pointer;
-font-weight:600;
-font-size:14px;
-color:white;
-background:linear-gradient(135deg,#06b6d4,#3b82f6,#9333ea);
-background-size:200% 200%;
-transition:all 0.3s ease;
-box-shadow:0 10px 25px rgba(0,0,0,0.4);
-position:relative;
-overflow:hidden;
-}
-
-button:hover{
-transform:translateY(-3px);
-background-position:right center;
-box-shadow:0 15px 35px rgba(0,0,0,0.6);
-}
-
-button:active{
-transform:scale(0.95);
-}
-
-button::before{
-content:"";
-position:absolute;
-top:0;
-left:-100%;
-width:100%;
-height:100%;
-background:linear-gradient(120deg,transparent,rgba(255,255,255,0.4),transparent);
-transition:0.5s;
-}
-
-button:hover::before{
-left:100%;
-}
-
-.start-btn{background:linear-gradient(135deg,#22c55e,#16a34a);}
-.pause-btn{background:linear-gradient(135deg,#facc15,#f59e0b);}
-.reset-btn{background:linear-gradient(135deg,#ef4444,#dc2626);}
-
-footer{
-margin-top:100px;
-padding:30px;
-opacity:0.6;
-}
-
-@media(max-width:768px){
-.box{width:45%;}
-.logo{font-size:34px;}
-}
+.section{margin-top:40px;}
 </style>
 </head>
-
 <body>
 
-<div class="container">
+<!-- LOGIN PANEL -->
+<div class="card" id="authCard">
+<h1>GÜN AZALIYOR</h1>
+<p>Devam etmek için kullanıcı adını gir</p>
+<input type="text" id="username" placeholder="Kullanıcı adı">
+<button onclick="login()">Giriş Yap</button>
+</div>
 
-<div class="logo">GÜN AZALIYOR</div>
-<div class="tagline">2026 YKS'ye kalan süre geri gelmeyecek.</div>
+<!-- DASHBOARD -->
+<div class="card hidden" id="dashboard">
+
+<h1 id="welcomeText"></h1>
+<button onclick="logout()">Çıkış Yap</button>
 
 <!-- COUNTDOWN -->
 <div class="countdown">
-<div class="box"><div class="number" id="days">0</div><div class="label">Gün</div></div>
-<div class="box"><div class="number" id="hours">0</div><div class="label">Saat</div></div>
-<div class="box"><div class="number" id="minutes">0</div><div class="label">Dakika</div></div>
-<div class="box"><div class="number" id="seconds">0</div><div class="label">Saniye</div></div>
+<div class="box"><div class="number" id="days">0</div><div>Gün</div></div>
+<div class="box"><div class="number" id="hours">0</div><div>Saat</div></div>
+<div class="box"><div class="number" id="minutes">0</div><div>Dakika</div></div>
+<div class="box"><div class="number" id="seconds">0</div><div>Saniye</div></div>
 </div>
 
-<!-- KRONOMETRE -->
+<!-- TIMER -->
 <div class="section">
 <h2>Çalışma Kronometresi</h2>
 <div class="timer-display" id="timer">00:00:00</div>
-<button class="start-btn" onclick="startTimer()">Başlat</button>
-<button class="pause-btn" onclick="pauseTimer()">Duraklat</button>
-<button class="reset-btn" onclick="resetTimer()">Sıfırla</button>
+<button onclick="startTimer()">Başlat</button>
+<button onclick="pauseTimer()">Duraklat</button>
+<button onclick="resetTimer()">Sıfırla</button>
 </div>
 
-<!-- GÜNLÜK TOPLAM -->
+<!-- DAILY TOTAL -->
 <div class="section">
 <h2>Bugün Toplam Çalışma</h2>
 <div class="timer-display" id="dailyTotal">00:00:00</div>
-<button class="reset-btn" onclick="resetDaily()">Bugünü Sıfırla</button>
+<button onclick="resetDaily()">Bugünü Sıfırla</button>
 </div>
 
 </div>
-
-<footer>
-© 2026 Gün Azalıyor
-</footer>
 
 <script>
+/* LOGIN */
+function login(){
+const username=document.getElementById("username").value;
+if(username.trim()!==""){
+localStorage.setItem("user",username);
+showDashboard();
+}
+}
+
+function logout(){
+localStorage.removeItem("user");
+location.reload();
+}
+
+function showDashboard(){
+document.getElementById("authCard").classList.add("hidden");
+document.getElementById("dashboard").classList.remove("hidden");
+document.getElementById("welcomeText").innerText=
+"Hoş geldin, "+localStorage.getItem("user");
+}
+
+if(localStorage.getItem("user")) showDashboard();
+
 /* COUNTDOWN */
-const targetDate = new Date("June 20, 2026 09:00:00").getTime();
+const targetDate=new Date("June 20, 2026 09:00:00").getTime();
 setInterval(()=>{
-const now = new Date().getTime();
-const distance = targetDate - now;
+const now=new Date().getTime();
+const distance=targetDate-now;
 document.getElementById("days").innerText=Math.floor(distance/(1000*60*60*24));
 document.getElementById("hours").innerText=Math.floor((distance%(1000*60*60*24))/(1000*60*60));
 document.getElementById("minutes").innerText=Math.floor((distance%(1000*60*60))/(1000*60));
@@ -240,7 +201,7 @@ interval=null;
 
 /* DAILY STORAGE */
 function getTodayKey(){
-return "study-"+new Date().toISOString().slice(0,10);
+return "study-"+localStorage.getItem("user")+"-"+new Date().toISOString().slice(0,10);
 }
 
 function saveDaily(sec){
