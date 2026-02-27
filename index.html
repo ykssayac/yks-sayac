@@ -4,94 +4,142 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>2026 YKS Geri Sayım | YKS'ye Kaç Gün Kaldı?</title>
-<meta name="description" content="2026 YKS geri sayım sayacı. YKS'ye kaç gün kaldı? Gün, saat, dakika ve saniye olarak canlı takip edin.">
+<title>Gün Azalıyor | 2026 YKS Geri Sayım</title>
+<meta name="description" content="2026 YKS geri sayım sayacı. YKS'ye kaç gün kaldı? Gün Azalıyor motivasyon platformu ile her gün takip edin.">
 
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif;}
+
 body{
-background:#0f172a;
+height:100vh;
 color:white;
-text-align:center;
+overflow-x:hidden;
+background:linear-gradient(-45deg,#0f172a,#1e293b,#0ea5e9,#9333ea);
+background-size:400% 400%;
+animation:gradient 12s ease infinite;
 }
-header{
-padding:30px 20px;
-font-size:28px;
-font-weight:800;
-background:#111827;
+
+@keyframes gradient{
+0%{background-position:0% 50%;}
+50%{background-position:100% 50%;}
+100%{background-position:0% 50%;}
 }
+
 .container{
 max-width:1100px;
 margin:auto;
-padding:40px 20px;
+padding:60px 20px;
+text-align:center;
 }
+
+.logo{
+font-size:42px;
+font-weight:800;
+letter-spacing:2px;
+}
+
+.tagline{
+margin-top:15px;
+opacity:0.8;
+font-size:18px;
+}
+
 .countdown{
+margin-top:60px;
 display:flex;
 justify-content:center;
 gap:25px;
 flex-wrap:wrap;
-margin:40px 0;
 }
+
 .box{
-background:#1e293b;
+background:rgba(255,255,255,0.08);
+backdrop-filter:blur(15px);
 padding:30px;
 border-radius:20px;
-width:170px;
-box-shadow:0 0 25px rgba(0,255,255,0.3);
-transition:0.3s;
+width:180px;
+transition:0.4s;
+box-shadow:0 0 25px rgba(0,0,0,0.4);
 }
+
 .box:hover{
-transform:translateY(-5px);
-box-shadow:0 0 30px rgba(0,255,255,0.6);
+transform:translateY(-8px);
+box-shadow:0 0 40px rgba(255,255,255,0.4);
 }
+
 .number{
-font-size:42px;
+font-size:48px;
 font-weight:800;
 }
+
 .label{
-opacity:0.6;
 margin-top:8px;
+opacity:0.7;
 }
+
+.motivation{
+margin-top:60px;
+font-size:22px;
+font-weight:600;
+min-height:40px;
+transition:0.3s;
+}
+
+.cta{
+margin-top:40px;
+}
+
+.cta button{
+padding:15px 35px;
+border:none;
+border-radius:40px;
+font-size:16px;
+font-weight:600;
+cursor:pointer;
+background:white;
+color:black;
+transition:0.3s;
+}
+
+.cta button:hover{
+transform:scale(1.05);
+}
+
 .section{
-margin-top:70px;
-background:#1e293b;
-padding:40px;
-border-radius:20px;
+margin-top:100px;
+background:rgba(255,255,255,0.07);
+padding:50px;
+border-radius:25px;
 text-align:left;
 }
+
 .section h2{
-margin-bottom:15px;
+margin-bottom:20px;
 }
-.ad-area{
-margin:60px 0;
-padding:20px;
-background:#111827;
-border-radius:15px;
-}
+
 footer{
-margin-top:80px;
-padding:20px;
-background:#111827;
+margin-top:120px;
+padding:30px;
 font-size:14px;
 opacity:0.6;
+text-align:center;
 }
-@media(max-width:600px){
+
+@media(max-width:768px){
 .box{width:45%;}
+.logo{font-size:34px;}
 }
 </style>
 </head>
 
 <body>
 
-<header>
-2026 YKS Geri Sayım
-</header>
-
 <div class="container">
 
-<h1>YKS'ye Kalan Süre</h1>
+<div class="logo">GÜN AZALIYOR</div>
+<div class="tagline">2026 YKS'ye kalan süre geri gelmeyecek.</div>
 
 <div class="countdown">
 <div class="box">
@@ -112,49 +160,27 @@ opacity:0.6;
 </div>
 </div>
 
-<!-- GOOGLE REKLAM ALANI -->
-<div class="ad-area">
-<h3>Reklam</h3>
+<div class="motivation" id="motivationText">
+Bugün çalıştın mı?
+</div>
 
-<!-- Buraya Google AdSense kodunu yapıştıracaksın -->
-
-<!-- ÖRNEK (KENDİ KODUNLA DEĞİŞTİR) -->
-<!--
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6087080256267169"
-     crossorigin="anonymous"></script>
-<ins class="adsbygoogle"
-     style="display:block"
-     data-ad-client="ca-pub-XXXX"
-     data-ad-slot="1234567890"
-     data-ad-format="auto"
-     data-full-width-responsive="true"></ins>
-<script>
-     (adsbygoogle = window.adsbygoogle || []).push({});
-</script>
--->
-
+<div class="cta">
+<button onclick="alert('Çalışmaya başla.')">Bugün Başla</button>
 </div>
 
 <div class="section">
 <h2>YKS Nedir?</h2>
 <p>
 YKS, Türkiye'de üniversiteye giriş için yapılan merkezi sınavdır.
-TYT, AYT ve YDT olmak üzere üç oturumdan oluşur.
-</p>
-</div>
-
-<div class="section">
-<h2>YKS 2026 Hakkında</h2>
-<p>
-2026 YKS'nin Haziran ayında yapılması beklenmektedir.
-Bu sayaç, sınava kalan süreyi anlık olarak gösterir.
+Her yıl yüz binlerce aday aynı hedef için yarışır.
+Disiplinli olan kazanır.
 </p>
 </div>
 
 </div>
 
 <footer>
-© 2026 YKS Geri Sayım | Tüm Hakları Saklıdır
+© 2026 Gün Azalıyor | Tüm Hakları Saklıdır
 </footer>
 
 <script>
@@ -175,8 +201,21 @@ document.getElementById("minutes").innerText = minutes;
 document.getElementById("seconds").innerText = seconds;
 
 },1000);
+
+const messages = [
+"Rakiplerin şu an çalışıyor.",
+"Her geçen saniye geri gelmeyecek.",
+"Bugün boş geçtiyse yarın iki kat çalış.",
+"Disiplin motivasyondan daha güçlüdür.",
+"1 gün = 24 saat avantaj."
+];
+
+let index = 0;
+setInterval(()=>{
+index = (index + 1) % messages.length;
+document.getElementById("motivationText").innerText = messages[index];
+},4000);
 </script>
 
 </body>
 </html>
-
