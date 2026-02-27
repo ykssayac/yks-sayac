@@ -3,9 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Gün Azalıyor | Firebase Sistem</title>
+<title>Gün Azalıyor | 2026 YKS</title>
 
-<!-- Firebase v8 CDN -->
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
@@ -20,7 +19,7 @@ padding:40px;
 }
 input,button{
 padding:10px;
-margin:8px;
+margin:6px;
 border-radius:20px;
 border:none;
 }
@@ -30,6 +29,17 @@ color:white;
 cursor:pointer;
 }
 .hidden{display:none;}
+.box{
+display:inline-block;
+margin:10px;
+padding:15px;
+background:#1e293b;
+border-radius:10px;
+}
+.timer{
+font-size:32px;
+margin:15px 0;
+}
 table{
 margin:20px auto;
 border-collapse:collapse;
@@ -37,7 +47,7 @@ width:90%;
 max-width:600px;
 }
 th,td{
-padding:10px;
+padding:8px;
 border-bottom:1px solid rgba(255,255,255,0.3);
 }
 </style>
@@ -46,26 +56,40 @@ border-bottom:1px solid rgba(255,255,255,0.3);
 
 <h1>GÜN AZALIYOR</h1>
 
-<!-- AUTH PANEL -->
+<!-- AUTH -->
 <div id="auth">
-<h2>Kayıt / Giriş</h2>
 <input type="email" id="email" placeholder="Email">
 <input type="password" id="password" placeholder="Şifre"><br>
 <button onclick="register()">Kayıt Ol</button>
 <button onclick="login()">Giriş Yap</button>
-<button onclick="adminLogin()">Admin Girişi</button>
+<button onclick="adminLogin()">Admin</button>
 </div>
 
-<!-- USER DASHBOARD -->
+<!-- DASHBOARD -->
 <div id="dashboard" class="hidden">
+
 <h2 id="welcome"></h2>
 <button onclick="logout()">Çıkış</button>
 
-<h3>Bugün Çalışma Süresi (Dakika)</h3>
-<input type="number" id="minutes">
-<button onclick="saveStudy()">Kaydet</button>
+<!-- COUNTDOWN -->
+<h3>2026 YKS Geri Sayım</h3>
+<div>
+<div class="box"><div id="days">0</div>Gün</div>
+<div class="box"><div id="hours">0</div>Saat</div>
+<div class="box"><div id="minutes">0</div>Dakika</div>
+<div class="box"><div id="seconds">0</div>Saniye</div>
+</div>
 
-<p id="status"></p>
+<!-- TIMER -->
+<h3>Kronometre</h3>
+<div class="timer" id="timer">00:00:00</div>
+<button onclick="startTimer()">Başlat</button>
+<button onclick="pauseTimer()">Duraklat</button>
+<button onclick="resetTimer()">Sıfırla</button>
+
+<h3>Bugün Toplam</h3>
+<div class="timer" id="dailyTotal">0 dk</div>
+
 </div>
 
 <!-- ADMIN PANEL -->
@@ -74,10 +98,7 @@ border-bottom:1px solid rgba(255,255,255,0.3);
 <button onclick="logout()">Çıkış</button>
 <table>
 <thead>
-<tr>
-<th>Email</th>
-<th>Veriler</th>
-</tr>
+<tr><th>Email</th><th>Veri</th></tr>
 </thead>
 <tbody id="adminTable"></tbody>
 </table>
@@ -85,93 +106,127 @@ border-bottom:1px solid rgba(255,255,255,0.3);
 
 <script>
 
-// FIREBASE CONFIG (SENİN PROJEN)
+// FIREBASE CONFIG
 var firebaseConfig = {
   apiKey: "AIzaSyAqyJWpcmvxRKYlXKKJryrYis5uotXXZOI",
   authDomain: "ykssayac-58125.firebaseapp.com",
   projectId: "ykssayac-58125",
   storageBucket: "ykssayac-58125.firebasestorage.app",
   messagingSenderId: "56392190567",
-  appId: "1:56392190567:web:af1595285ad06b495322c2",
-  measurementId: "G-C5DKK1XX5E"
+  appId: "1:56392190567:web:af1595285ad06b495322c2"
 };
 
 firebase.initializeApp(firebaseConfig);
-
 var auth = firebase.auth();
 var db = firebase.firestore();
 
-/* REGISTER */
+/* AUTH */
 function register(){
-var email=document.getElementById("email").value;
-var password=document.getElementById("password").value;
-auth.createUserWithEmailAndPassword(email,password)
-.catch(e=>alert(e.message));
+auth.createUserWithEmailAndPassword(
+email.value,password.value
+).catch(e=>alert(e.message));
 }
 
-/* LOGIN */
 function login(){
-var email=document.getElementById("email").value;
-var password=document.getElementById("password").value;
-auth.signInWithEmailAndPassword(email,password)
-.catch(e=>alert(e.message));
+auth.signInWithEmailAndPassword(
+email.value,password.value
+).catch(e=>alert(e.message));
 }
 
-/* ADMIN LOGIN */
-function adminLogin(){
-var pass=prompt("Admin şifre:");
-if(pass==="admin123"){
-showAdmin();
-}
-}
-
-/* LOGOUT */
 function logout(){
 auth.signOut();
 location.reload();
 }
 
-/* SAVE STUDY */
-function saveStudy(){
-var user=auth.currentUser;
-if(!user) return;
-
-var minutes=parseInt(document.getElementById("minutes").value);
-var today=new Date().toISOString().slice(0,10);
-
-db.collection("users").doc(user.uid).set({
-email:user.email,
-[today]:minutes
-},{merge:true});
-
-document.getElementById("status").innerText="Kaydedildi!";
+function adminLogin(){
+if(prompt("Şifre:")==="admin123"){
+showAdmin();
+}
 }
 
-/* AUTH STATE */
-auth.onAuthStateChanged(function(user){
+auth.onAuthStateChanged(user=>{
 if(user){
-document.getElementById("auth").classList.add("hidden");
-document.getElementById("dashboard").classList.remove("hidden");
-document.getElementById("welcome").innerText="Hoş geldin "+user.email;
+authDiv(false);
+welcome.innerText="Hoş geldin "+user.email;
 }else{
-document.getElementById("auth").classList.remove("hidden");
-document.getElementById("dashboard").classList.add("hidden");
+authDiv(true);
 }
 });
 
-/* ADMIN PANEL LOAD */
-function showAdmin(){
-document.getElementById("auth").classList.add("hidden");
-document.getElementById("dashboard").classList.add("hidden");
-document.getElementById("adminPanel").classList.remove("hidden");
+function authDiv(show){
+auth.classList.toggle("hidden",!show);
+dashboard.classList.toggle("hidden",show);
+}
 
-db.collection("users").get().then(snapshot=>{
-var table=document.getElementById("adminTable");
-table.innerHTML="";
-snapshot.forEach(doc=>{
-var data=doc.data();
-var row="<tr><td>"+data.email+"</td><td>"+JSON.stringify(data)+"</td></tr>";
-table.innerHTML+=row;
+/* COUNTDOWN */
+const target=new Date("June 20, 2026 09:00:00").getTime();
+setInterval(()=>{
+const now=new Date().getTime();
+const diff=target-now;
+days.innerText=Math.floor(diff/(1000*60*60*24));
+hours.innerText=Math.floor((diff%(1000*60*60*24))/(1000*60*60));
+minutes.innerText=Math.floor((diff%(1000*60*60))/(1000*60));
+seconds.innerText=Math.floor((diff%(1000*60))/1000);
+},1000);
+
+/* TIMER */
+let sec=0, interval=null, daily=0;
+
+function startTimer(){
+if(!interval){
+interval=setInterval(()=>{
+sec++;
+timer.innerText=format(sec);
+},1000);
+}
+}
+
+function pauseTimer(){
+if(interval){
+clearInterval(interval);
+interval=null;
+daily+=Math.floor(sec/60);
+saveDaily(daily);
+sec=0;
+timer.innerText="00:00:00";
+}
+}
+
+function resetTimer(){
+clearInterval(interval);
+interval=null;
+sec=0;
+timer.innerText="00:00:00";
+}
+
+function format(s){
+let h=Math.floor(s/3600);
+let m=Math.floor((s%3600)/60);
+let ss=s%60;
+return `${pad(h)}:${pad(m)}:${pad(ss)}`;
+}
+function pad(n){return n<10?"0"+n:n;}
+
+function saveDaily(min){
+var user=auth.currentUser;
+if(!user) return;
+var today=new Date().toISOString().slice(0,10);
+db.collection("users").doc(user.uid).set({
+email:user.email,
+[today]:min
+},{merge:true});
+dailyTotal.innerText=min+" dk";
+}
+
+/* ADMIN */
+function showAdmin(){
+authDiv(false);
+adminPanel.classList.remove("hidden");
+db.collection("users").get().then(snap=>{
+adminTable.innerHTML="";
+snap.forEach(doc=>{
+adminTable.innerHTML+=
+`<tr><td>${doc.data().email}</td><td>${JSON.stringify(doc.data())}</td></tr>`;
 });
 });
 }
