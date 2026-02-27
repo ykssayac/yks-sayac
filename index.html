@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Gün Azalıyor | 2026 YKS Geri Sayım</title>
-<meta name="description" content="2026 YKS geri sayım sayacı ve çalışma kronometresi.">
+<meta name="description" content="2026 YKS geri sayım sayacı ve çalışma takip sistemi.">
 
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
 
@@ -16,7 +16,7 @@ body{
 color:white;
 background:linear-gradient(-45deg,#0f172a,#1e293b,#0ea5e9,#9333ea);
 background-size:400% 400%;
-animation:gradient 12s ease infinite;
+animation:gradient 15s ease infinite;
 }
 
 @keyframes gradient{
@@ -35,11 +35,13 @@ text-align:center;
 .logo{
 font-size:42px;
 font-weight:800;
+letter-spacing:2px;
 }
 
 .tagline{
 margin-top:10px;
 opacity:0.8;
+font-size:18px;
 }
 
 .countdown{
@@ -57,6 +59,12 @@ padding:30px;
 border-radius:20px;
 width:180px;
 box-shadow:0 0 25px rgba(0,0,0,0.4);
+transition:0.3s;
+}
+
+.box:hover{
+transform:translateY(-6px);
+box-shadow:0 0 40px rgba(255,255,255,0.3);
 }
 
 .number{
@@ -68,65 +76,75 @@ font-weight:800;
 opacity:0.7;
 }
 
-.motivation{
-margin-top:50px;
-font-size:22px;
-font-weight:600;
-min-height:30px;
-}
-
-/* KRONOMETRE */
-
-.timer-section{
-margin-top:60px;
+.section{
+margin-top:70px;
 background:rgba(255,255,255,0.08);
 padding:40px;
 border-radius:25px;
 }
 
+/* TIMER */
 .timer-display{
 font-size:48px;
 margin-bottom:20px;
 }
 
-.timer-buttons button{
-padding:12px 25px;
-margin:5px;
+/* MODERN BUTTONS */
+button{
+padding:14px 30px;
+margin:8px;
 border:none;
-border-radius:30px;
+border-radius:50px;
 cursor:pointer;
 font-weight:600;
+font-size:14px;
+color:white;
+background:linear-gradient(135deg,#06b6d4,#3b82f6,#9333ea);
+background-size:200% 200%;
+transition:all 0.3s ease;
+box-shadow:0 10px 25px rgba(0,0,0,0.4);
+position:relative;
+overflow:hidden;
 }
 
-/* MAIL */
-
-.mail-section{
-margin-top:60px;
-background:rgba(255,255,255,0.08);
-padding:40px;
-border-radius:25px;
+button:hover{
+transform:translateY(-3px);
+background-position:right center;
+box-shadow:0 15px 35px rgba(0,0,0,0.6);
 }
 
-.mail-section input{
-padding:12px;
-width:70%;
-border:none;
-border-radius:30px;
-margin-right:10px;
+button:active{
+transform:scale(0.95);
 }
 
-.mail-section button{
-padding:12px 25px;
-border:none;
-border-radius:30px;
-cursor:pointer;
-font-weight:600;
+button::before{
+content:"";
+position:absolute;
+top:0;
+left:-100%;
+width:100%;
+height:100%;
+background:linear-gradient(120deg,transparent,rgba(255,255,255,0.4),transparent);
+transition:0.5s;
 }
+
+button:hover::before{
+left:100%;
+}
+
+.start-btn{background:linear-gradient(135deg,#22c55e,#16a34a);}
+.pause-btn{background:linear-gradient(135deg,#facc15,#f59e0b);}
+.reset-btn{background:linear-gradient(135deg,#ef4444,#dc2626);}
 
 footer{
-margin-top:80px;
+margin-top:100px;
 padding:30px;
 opacity:0.6;
+}
+
+@media(max-width:768px){
+.box{width:45%;}
+.logo{font-size:34px;}
 }
 </style>
 </head>
@@ -138,6 +156,7 @@ opacity:0.6;
 <div class="logo">GÜN AZALIYOR</div>
 <div class="tagline">2026 YKS'ye kalan süre geri gelmeyecek.</div>
 
+<!-- COUNTDOWN -->
 <div class="countdown">
 <div class="box"><div class="number" id="days">0</div><div class="label">Gün</div></div>
 <div class="box"><div class="number" id="hours">0</div><div class="label">Saat</div></div>
@@ -145,27 +164,20 @@ opacity:0.6;
 <div class="box"><div class="number" id="seconds">0</div><div class="label">Saniye</div></div>
 </div>
 
-<div class="motivation" id="motivationText">
-Bugün çalıştın mı?
-</div>
-
 <!-- KRONOMETRE -->
-<div class="timer-section">
+<div class="section">
 <h2>Çalışma Kronometresi</h2>
 <div class="timer-display" id="timer">00:00:00</div>
-<div class="timer-buttons">
-<button onclick="startTimer()">Başlat</button>
-<button onclick="pauseTimer()">Duraklat</button>
-<button onclick="resetTimer()">Sıfırla</button>
-</div>
+<button class="start-btn" onclick="startTimer()">Başlat</button>
+<button class="pause-btn" onclick="pauseTimer()">Duraklat</button>
+<button class="reset-btn" onclick="resetTimer()">Sıfırla</button>
 </div>
 
-<!-- MAIL TOPLAMA -->
-<div class="mail-section">
-<h2>Günlük Motivasyon Al</h2>
-<p>Her gün 1 motivasyon maili.</p>
-<input type="email" placeholder="E-posta adresin">
-<button>Katıl</button>
+<!-- GÜNLÜK TOPLAM -->
+<div class="section">
+<h2>Bugün Toplam Çalışma</h2>
+<div class="timer-display" id="dailyTotal">00:00:00</div>
+<button class="reset-btn" onclick="resetDaily()">Bugünü Sıfırla</button>
 </div>
 
 </div>
@@ -180,24 +192,11 @@ const targetDate = new Date("June 20, 2026 09:00:00").getTime();
 setInterval(()=>{
 const now = new Date().getTime();
 const distance = targetDate - now;
-document.getElementById("days").innerText = Math.floor(distance/(1000*60*60*24));
-document.getElementById("hours").innerText = Math.floor((distance%(1000*60*60*24))/(1000*60*60));
-document.getElementById("minutes").innerText = Math.floor((distance%(1000*60*60))/(1000*60));
-document.getElementById("seconds").innerText = Math.floor((distance%(1000*60))/1000);
+document.getElementById("days").innerText=Math.floor(distance/(1000*60*60*24));
+document.getElementById("hours").innerText=Math.floor((distance%(1000*60*60*24))/(1000*60*60));
+document.getElementById("minutes").innerText=Math.floor((distance%(1000*60*60))/(1000*60));
+document.getElementById("seconds").innerText=Math.floor((distance%(1000*60))/1000);
 },1000);
-
-/* MOTIVASYON */
-const messages=[
-"Rakiplerin çalışıyor.",
-"Disiplin kazanır.",
-"Her saniye değerli.",
-"Bugün boş geçmesin."
-];
-let i=0;
-setInterval(()=>{
-i=(i+1)%messages.length;
-document.getElementById("motivationText").innerText=messages[i];
-},4000);
 
 /* TIMER */
 let seconds=0;
@@ -223,8 +222,13 @@ updateTimer();
 }
 
 function pauseTimer(){
+if(interval){
 clearInterval(interval);
 interval=null;
+saveDaily(seconds);
+seconds=0;
+updateTimer();
+}
 }
 
 function resetTimer(){
@@ -234,7 +238,37 @@ clearInterval(interval);
 interval=null;
 }
 
+/* DAILY STORAGE */
+function getTodayKey(){
+return "study-"+new Date().toISOString().slice(0,10);
+}
+
+function saveDaily(sec){
+let key=getTodayKey();
+let current=parseInt(localStorage.getItem(key))||0;
+localStorage.setItem(key,current+sec);
+updateDaily();
+}
+
+function updateDaily(){
+let key=getTodayKey();
+let total=parseInt(localStorage.getItem(key))||0;
+let hrs=Math.floor(total/3600);
+let mins=Math.floor((total%3600)/60);
+let secs=total%60;
+document.getElementById("dailyTotal").innerText=
+String(hrs).padStart(2,'0')+":"+
+String(mins).padStart(2,'0')+":"+
+String(secs).padStart(2,'0');
+}
+
+function resetDaily(){
+localStorage.removeItem(getTodayKey());
+updateDaily();
+}
+
 updateTimer();
+updateDaily();
 </script>
 
 </body>
