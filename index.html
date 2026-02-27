@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Gün Azalıyor | 2026 YKS Geri Sayım</title>
-<meta name="description" content="2026 YKS geri sayım sayacı. YKS'ye kaç gün kaldı? Gün Azalıyor motivasyon platformu ile her gün takip edin.">
+<meta name="description" content="2026 YKS geri sayım sayacı ve çalışma kronometresi.">
 
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
 
@@ -13,9 +13,7 @@
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif;}
 
 body{
-height:100vh;
 color:white;
-overflow-x:hidden;
 background:linear-gradient(-45deg,#0f172a,#1e293b,#0ea5e9,#9333ea);
 background-size:400% 400%;
 animation:gradient 12s ease infinite;
@@ -37,13 +35,11 @@ text-align:center;
 .logo{
 font-size:42px;
 font-weight:800;
-letter-spacing:2px;
 }
 
 .tagline{
-margin-top:15px;
+margin-top:10px;
 opacity:0.8;
-font-size:18px;
 }
 
 .countdown{
@@ -60,13 +56,7 @@ backdrop-filter:blur(15px);
 padding:30px;
 border-radius:20px;
 width:180px;
-transition:0.4s;
 box-shadow:0 0 25px rgba(0,0,0,0.4);
-}
-
-.box:hover{
-transform:translateY(-8px);
-box-shadow:0 0 40px rgba(255,255,255,0.4);
 }
 
 .number{
@@ -75,61 +65,68 @@ font-weight:800;
 }
 
 .label{
-margin-top:8px;
 opacity:0.7;
 }
 
 .motivation{
-margin-top:60px;
+margin-top:50px;
 font-size:22px;
 font-weight:600;
-min-height:40px;
-transition:0.3s;
+min-height:30px;
 }
 
-.cta{
-margin-top:40px;
-}
+/* KRONOMETRE */
 
-.cta button{
-padding:15px 35px;
-border:none;
-border-radius:40px;
-font-size:16px;
-font-weight:600;
-cursor:pointer;
-background:white;
-color:black;
-transition:0.3s;
-}
-
-.cta button:hover{
-transform:scale(1.05);
-}
-
-.section{
-margin-top:100px;
-background:rgba(255,255,255,0.07);
-padding:50px;
+.timer-section{
+margin-top:60px;
+background:rgba(255,255,255,0.08);
+padding:40px;
 border-radius:25px;
-text-align:left;
 }
 
-.section h2{
+.timer-display{
+font-size:48px;
 margin-bottom:20px;
 }
 
-footer{
-margin-top:120px;
-padding:30px;
-font-size:14px;
-opacity:0.6;
-text-align:center;
+.timer-buttons button{
+padding:12px 25px;
+margin:5px;
+border:none;
+border-radius:30px;
+cursor:pointer;
+font-weight:600;
 }
 
-@media(max-width:768px){
-.box{width:45%;}
-.logo{font-size:34px;}
+/* MAIL */
+
+.mail-section{
+margin-top:60px;
+background:rgba(255,255,255,0.08);
+padding:40px;
+border-radius:25px;
+}
+
+.mail-section input{
+padding:12px;
+width:70%;
+border:none;
+border-radius:30px;
+margin-right:10px;
+}
+
+.mail-section button{
+padding:12px 25px;
+border:none;
+border-radius:30px;
+cursor:pointer;
+font-weight:600;
+}
+
+footer{
+margin-top:80px;
+padding:30px;
+opacity:0.6;
 }
 </style>
 </head>
@@ -142,79 +139,102 @@ text-align:center;
 <div class="tagline">2026 YKS'ye kalan süre geri gelmeyecek.</div>
 
 <div class="countdown">
-<div class="box">
-<div class="number" id="days">0</div>
-<div class="label">Gün</div>
-</div>
-<div class="box">
-<div class="number" id="hours">0</div>
-<div class="label">Saat</div>
-</div>
-<div class="box">
-<div class="number" id="minutes">0</div>
-<div class="label">Dakika</div>
-</div>
-<div class="box">
-<div class="number" id="seconds">0</div>
-<div class="label">Saniye</div>
-</div>
+<div class="box"><div class="number" id="days">0</div><div class="label">Gün</div></div>
+<div class="box"><div class="number" id="hours">0</div><div class="label">Saat</div></div>
+<div class="box"><div class="number" id="minutes">0</div><div class="label">Dakika</div></div>
+<div class="box"><div class="number" id="seconds">0</div><div class="label">Saniye</div></div>
 </div>
 
 <div class="motivation" id="motivationText">
 Bugün çalıştın mı?
 </div>
 
-<div class="cta">
-<button onclick="alert('Çalışmaya başla.')">Bugün Başla</button>
+<!-- KRONOMETRE -->
+<div class="timer-section">
+<h2>Çalışma Kronometresi</h2>
+<div class="timer-display" id="timer">00:00:00</div>
+<div class="timer-buttons">
+<button onclick="startTimer()">Başlat</button>
+<button onclick="pauseTimer()">Duraklat</button>
+<button onclick="resetTimer()">Sıfırla</button>
+</div>
 </div>
 
-<div class="section">
-<h2>YKS Nedir?</h2>
-<p>
-YKS, Türkiye'de üniversiteye giriş için yapılan merkezi sınavdır.
-Her yıl yüz binlerce aday aynı hedef için yarışır.
-Disiplinli olan kazanır.
-</p>
+<!-- MAIL TOPLAMA -->
+<div class="mail-section">
+<h2>Günlük Motivasyon Al</h2>
+<p>Her gün 1 motivasyon maili.</p>
+<input type="email" placeholder="E-posta adresin">
+<button>Katıl</button>
 </div>
 
 </div>
 
 <footer>
-© 2026 Gün Azalıyor | Tüm Hakları Saklıdır
+© 2026 Gün Azalıyor
 </footer>
 
 <script>
+/* COUNTDOWN */
 const targetDate = new Date("June 20, 2026 09:00:00").getTime();
-
 setInterval(()=>{
 const now = new Date().getTime();
 const distance = targetDate - now;
-
-const days = Math.floor(distance / (1000*60*60*24));
-const hours = Math.floor((distance % (1000*60*60*24)) / (1000*60*60));
-const minutes = Math.floor((distance % (1000*60*60)) / (1000*60));
-const seconds = Math.floor((distance % (1000*60)) / 1000);
-
-document.getElementById("days").innerText = days;
-document.getElementById("hours").innerText = hours;
-document.getElementById("minutes").innerText = minutes;
-document.getElementById("seconds").innerText = seconds;
-
+document.getElementById("days").innerText = Math.floor(distance/(1000*60*60*24));
+document.getElementById("hours").innerText = Math.floor((distance%(1000*60*60*24))/(1000*60*60));
+document.getElementById("minutes").innerText = Math.floor((distance%(1000*60*60))/(1000*60));
+document.getElementById("seconds").innerText = Math.floor((distance%(1000*60))/1000);
 },1000);
 
-const messages = [
-"Rakiplerin şu an çalışıyor.",
-"Her geçen saniye geri gelmeyecek.",
-"Bugün boş geçtiyse yarın iki kat çalış.",
-"Disiplin motivasyondan daha güçlüdür.",
-"1 gün = 24 saat avantaj."
+/* MOTIVASYON */
+const messages=[
+"Rakiplerin çalışıyor.",
+"Disiplin kazanır.",
+"Her saniye değerli.",
+"Bugün boş geçmesin."
 ];
-
-let index = 0;
+let i=0;
 setInterval(()=>{
-index = (index + 1) % messages.length;
-document.getElementById("motivationText").innerText = messages[index];
+i=(i+1)%messages.length;
+document.getElementById("motivationText").innerText=messages[i];
 },4000);
+
+/* TIMER */
+let seconds=0;
+let interval=null;
+
+function updateTimer(){
+let hrs=Math.floor(seconds/3600);
+let mins=Math.floor((seconds%3600)/60);
+let secs=seconds%60;
+document.getElementById("timer").innerText=
+String(hrs).padStart(2,'0')+":"+
+String(mins).padStart(2,'0')+":"+
+String(secs).padStart(2,'0');
+}
+
+function startTimer(){
+if(!interval){
+interval=setInterval(()=>{
+seconds++;
+updateTimer();
+},1000);
+}
+}
+
+function pauseTimer(){
+clearInterval(interval);
+interval=null;
+}
+
+function resetTimer(){
+seconds=0;
+updateTimer();
+clearInterval(interval);
+interval=null;
+}
+
+updateTimer();
 </script>
 
 </body>
