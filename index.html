@@ -3,31 +3,26 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Gün Azalıyor | 2026 YKS</title>
+<title>Gün Azalıyor | Admin Sistem</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
-
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif;}
-
 body{
 min-height:100vh;
-color:white;
 background:linear-gradient(-45deg,#0f172a,#1e293b,#0ea5e9,#9333ea);
 background-size:400% 400%;
 animation:gradient 15s ease infinite;
+color:white;
 display:flex;
 align-items:center;
 justify-content:center;
 }
-
 @keyframes gradient{
 0%{background-position:0% 50%;}
 50%{background-position:100% 50%;}
 100%{background-position:0% 50%;}
 }
-
 .hidden{display:none;}
-
 .card{
 background:rgba(255,255,255,0.08);
 backdrop-filter:blur(20px);
@@ -36,17 +31,14 @@ border-radius:25px;
 width:95%;
 max-width:900px;
 text-align:center;
-box-shadow:0 0 30px rgba(0,0,0,0.5);
 }
-
 input{
 padding:12px;
 width:100%;
-margin-top:10px;
+margin:10px 0;
 border:none;
 border-radius:30px;
 }
-
 button{
 padding:12px 25px;
 margin:8px;
@@ -56,81 +48,60 @@ cursor:pointer;
 font-weight:600;
 background:linear-gradient(135deg,#22c55e,#16a34a);
 color:white;
-transition:0.3s;
 }
-
-button:hover{transform:translateY(-3px);}
-
-.countdown{
-margin-top:40px;
-display:flex;
-justify-content:center;
-gap:20px;
-flex-wrap:wrap;
+table{
+width:100%;
+margin-top:20px;
+border-collapse:collapse;
 }
-
-.box{
-background:rgba(255,255,255,0.08);
-padding:25px;
-border-radius:20px;
-width:150px;
+th,td{
+padding:10px;
+border-bottom:1px solid rgba(255,255,255,0.2);
 }
-
-.number{font-size:32px;font-weight:800;}
-.timer-display{font-size:40px;margin:20px 0;}
-
-.section{margin-top:40px;}
 </style>
 </head>
 <body>
 
-<!-- LOGIN PANEL -->
 <div class="card" id="authCard">
 <h1>GÜN AZALIYOR</h1>
-<p>Devam etmek için kullanıcı adını gir</p>
 <input type="text" id="username" placeholder="Kullanıcı adı">
 <button onclick="login()">Giriş Yap</button>
+<button onclick="adminLogin()">Admin Girişi</button>
 </div>
 
-<!-- DASHBOARD -->
 <div class="card hidden" id="dashboard">
-
 <h1 id="welcomeText"></h1>
-<button onclick="logout()">Çıkış Yap</button>
-
-<!-- COUNTDOWN -->
-<div class="countdown">
-<div class="box"><div class="number" id="days">0</div><div>Gün</div></div>
-<div class="box"><div class="number" id="hours">0</div><div>Saat</div></div>
-<div class="box"><div class="number" id="minutes">0</div><div>Dakika</div></div>
-<div class="box"><div class="number" id="seconds">0</div><div>Saniye</div></div>
+<button onclick="logout()">Çıkış</button>
+<p>Bugün çalışmaya devam et.</p>
 </div>
 
-<!-- TIMER -->
-<div class="section">
-<h2>Çalışma Kronometresi</h2>
-<div class="timer-display" id="timer">00:00:00</div>
-<button onclick="startTimer()">Başlat</button>
-<button onclick="pauseTimer()">Duraklat</button>
-<button onclick="resetTimer()">Sıfırla</button>
-</div>
-
-<!-- DAILY TOTAL -->
-<div class="section">
-<h2>Bugün Toplam Çalışma</h2>
-<div class="timer-display" id="dailyTotal">00:00:00</div>
-<button onclick="resetDaily()">Bugünü Sıfırla</button>
-</div>
-
+<div class="card hidden" id="adminPanel">
+<h1>Admin Panel</h1>
+<button onclick="logout()">Çıkış</button>
+<table>
+<thead>
+<tr>
+<th>Kullanıcı</th>
+<th>Kayıtlı Veri Anahtarları</th>
+</tr>
+</thead>
+<tbody id="adminTable"></tbody>
+</table>
 </div>
 
 <script>
-/* LOGIN */
 function login(){
 const username=document.getElementById("username").value;
 if(username.trim()!==""){
 localStorage.setItem("user",username);
 showDashboard();
+}
+}
+
+function adminLogin(){
+const pass=prompt("Admin şifre:");
+if(pass==="admin123"){
+showAdmin();
 }
 }
 
@@ -146,90 +117,27 @@ document.getElementById("welcomeText").innerText=
 "Hoş geldin, "+localStorage.getItem("user");
 }
 
-if(localStorage.getItem("user")) showDashboard();
-
-/* COUNTDOWN */
-const targetDate=new Date("June 20, 2026 09:00:00").getTime();
-setInterval(()=>{
-const now=new Date().getTime();
-const distance=targetDate-now;
-document.getElementById("days").innerText=Math.floor(distance/(1000*60*60*24));
-document.getElementById("hours").innerText=Math.floor((distance%(1000*60*60*24))/(1000*60*60));
-document.getElementById("minutes").innerText=Math.floor((distance%(1000*60*60))/(1000*60));
-document.getElementById("seconds").innerText=Math.floor((distance%(1000*60))/1000);
-},1000);
-
-/* TIMER */
-let seconds=0;
-let interval=null;
-
-function updateTimer(){
-let hrs=Math.floor(seconds/3600);
-let mins=Math.floor((seconds%3600)/60);
-let secs=seconds%60;
-document.getElementById("timer").innerText=
-String(hrs).padStart(2,'0')+":"+
-String(mins).padStart(2,'0')+":"+
-String(secs).padStart(2,'0');
+function showAdmin(){
+document.getElementById("authCard").classList.add("hidden");
+document.getElementById("adminPanel").classList.remove("hidden");
+loadAdminData();
 }
 
-function startTimer(){
-if(!interval){
-interval=setInterval(()=>{
-seconds++;
-updateTimer();
-},1000);
+function loadAdminData(){
+let table=document.getElementById("adminTable");
+table.innerHTML="";
+for(let i=0;i<localStorage.length;i++){
+let key=localStorage.key(i);
+if(key.startsWith("study-")){
+let row="<tr><td>"+key.split("-")[1]+"</td><td>"+key+"</td></tr>";
+table.innerHTML+=row;
+}
 }
 }
 
-function pauseTimer(){
-if(interval){
-clearInterval(interval);
-interval=null;
-saveDaily(seconds);
-seconds=0;
-updateTimer();
+if(localStorage.getItem("user")){
+showDashboard();
 }
-}
-
-function resetTimer(){
-seconds=0;
-updateTimer();
-clearInterval(interval);
-interval=null;
-}
-
-/* DAILY STORAGE */
-function getTodayKey(){
-return "study-"+localStorage.getItem("user")+"-"+new Date().toISOString().slice(0,10);
-}
-
-function saveDaily(sec){
-let key=getTodayKey();
-let current=parseInt(localStorage.getItem(key))||0;
-localStorage.setItem(key,current+sec);
-updateDaily();
-}
-
-function updateDaily(){
-let key=getTodayKey();
-let total=parseInt(localStorage.getItem(key))||0;
-let hrs=Math.floor(total/3600);
-let mins=Math.floor((total%3600)/60);
-let secs=total%60;
-document.getElementById("dailyTotal").innerText=
-String(hrs).padStart(2,'0')+":"+
-String(mins).padStart(2,'0')+":"+
-String(secs).padStart(2,'0');
-}
-
-function resetDaily(){
-localStorage.removeItem(getTodayKey());
-updateDaily();
-}
-
-updateTimer();
-updateDaily();
 </script>
 
 </body>
