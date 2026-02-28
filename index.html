@@ -8,12 +8,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
 
 <style>
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:'Inter',sans-serif;
-}
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif;}
 
 body{
 background:#0f0f12;
@@ -37,6 +32,7 @@ border-bottom:1px solid #1c1c22;
 flex:1;
 overflow-y:auto;
 padding:25px;
+padding-bottom:90px;
 }
 
 .card{
@@ -45,6 +41,54 @@ border-radius:20px;
 padding:20px;
 margin-bottom:20px;
 border:1px solid #222;
+}
+
+input{
+width:100%;
+padding:10px;
+margin-top:10px;
+border-radius:12px;
+border:1px solid #222;
+background:#0f0f12;
+color:white;
+}
+
+button{
+margin-top:15px;
+width:100%;
+padding:12px;
+border:none;
+border-radius:12px;
+background:white;
+color:black;
+font-weight:600;
+cursor:pointer;
+transition:0.2s;
+}
+
+button:hover{
+opacity:0.85;
+}
+
+.big-number{
+font-size:34px;
+font-weight:800;
+margin-top:10px;
+}
+
+.progress{
+height:6px;
+background:#1a1a20;
+border-radius:20px;
+margin-top:15px;
+overflow:hidden;
+}
+
+.progress-bar{
+height:100%;
+background:white;
+width:0%;
+transition:0.3s;
 }
 
 /* BOTTOM NAV */
@@ -64,19 +108,13 @@ right:0;
 .nav-item{
 font-size:12px;
 text-align:center;
-opacity:0.6;
+opacity:0.5;
 cursor:pointer;
 }
 
 .nav-item.active{
 opacity:1;
 font-weight:600;
-}
-
-.big-number{
-font-size:34px;
-font-weight:800;
-margin-top:10px;
 }
 </style>
 </head>
@@ -86,80 +124,152 @@ margin-top:10px;
 NetLab
 </div>
 
-<div class="content" id="appContent">
-
-<div class="card">
-<h3>Hoş geldin</h3>
-<p>NetLab'e hoş geldin.</p>
-</div>
-
-<div class="card">
-<h3>Bugünkü Net</h3>
-<div class="big-number">0</div>
-</div>
-
-</div>
+<div class="content" id="appContent"></div>
 
 <div class="bottom-nav">
 <div class="nav-item active" onclick="switchTab('home',this)">🏠<br>Ana</div>
 <div class="nav-item" onclick="switchTab('net',this)">📊<br>Net</div>
 <div class="nav-item" onclick="switchTab('timer',this)">⏱️<br>Süre</div>
-<div class="nav-item" onclick="switchTab('pdf',this)">📚<br>Kaynak</div>
-<div class="nav-item" onclick="switchTab('profile',this)">👤<br>Profil</div>
 </div>
 
 <script>
+
+/* ---------- STATE ---------- */
+let currentNet = localStorage.getItem("currentNet") || 0;
+let targetNet = localStorage.getItem("targetNet") || 0;
+let timerSeconds = parseInt(localStorage.getItem("timerSeconds")) || 0;
+let dailyMinutes = parseInt(localStorage.getItem("dailyMinutes")) || 0;
+let interval = null;
+
+/* ---------- NAVIGATION ---------- */
 function switchTab(tab,el){
 document.querySelectorAll(".nav-item").forEach(n=>n.classList.remove("active"));
 el.classList.add("active");
 
-let content=document.getElementById("appContent");
+if(tab==="home") renderHome();
+if(tab==="net") renderNet();
+if(tab==="timer") renderTimer();
+}
 
-if(tab==="home"){
-content.innerHTML=`
+function renderHome(){
+appContent.innerHTML=`
 <div class="card">
-<h3>Dashboard</h3>
-<p>Genel görünüm.</p>
+<h3>Bugünkü Net</h3>
+<div class="big-number">${parseFloat(currentNet).toFixed(2)}</div>
+</div>
+
+<div class="card">
+<h3>Bugünkü Çalışma</h3>
+<div class="big-number">${dailyMinutes} dk</div>
 </div>
 `;
 }
 
-if(tab==="net"){
-content.innerHTML=`
+/* ---------- NET ---------- */
+function renderNet(){
+appContent.innerHTML=`
 <div class="card">
 <h3>Net Hesaplama</h3>
-<p>Buraya net sistemi gelecek.</p>
+<input type="number" id="dogru" placeholder="Doğru">
+<input type="number" id="yanlis" placeholder="Yanlış">
+<button onclick="calculateNet()">Hesapla</button>
+<div class="big-number" id="netResult">${parseFloat(currentNet).toFixed(2)}</div>
+</div>
+
+<div class="card">
+<h3>Hedef Net</h3>
+<input type="number" id="targetInput" placeholder="Hedef">
+<button onclick="setTarget()">Kaydet</button>
+<p>Hedef: ${targetNet}</p>
+<div class="progress">
+<div class="progress-bar" id="progressBar"></div>
+</div>
 </div>
 `;
+
+updateProgress();
 }
 
-if(tab==="timer"){
-content.innerHTML=`
+function calculateNet(){
+let d=parseFloat(document.getElementById("dogru").value)||0;
+let y=parseFloat(document.getElementById("yanlis").value)||0;
+currentNet=d-(y/4);
+localStorage.setItem("currentNet",currentNet);
+document.getElementById("netResult").innerText=currentNet.toFixed(2);
+updateProgress();
+}
+
+function setTarget(){
+targetNet=parseFloat(document.getElementById("targetInput").value)||0;
+localStorage.setItem("targetNet",targetNet);
+renderNet();
+}
+
+function updateProgress(){
+if(targetNet>0){
+let percent=(currentNet/targetNet)*100;
+document.getElementById("progressBar").style.width=
+Math.min(percent,100)+"%";
+}
+}
+
+/* ---------- TIMER ---------- */
+function renderTimer(){
+appContent.innerHTML=`
 <div class="card">
 <h3>Kronometre</h3>
-<p>Buraya süre sistemi gelecek.</p>
+<div class="big-number" id="timerDisplay">${formatTime(timerSeconds)}</div>
+<button onclick="startTimer()">Başlat</button>
+<button onclick="pauseTimer()">Duraklat</button>
+<button onclick="resetTimer()">Sıfırla</button>
+</div>
+
+<div class="card">
+<h3>Bugün Toplam</h3>
+<div class="big-number">${dailyMinutes} dk</div>
 </div>
 `;
 }
 
-if(tab==="pdf"){
-content.innerHTML=`
-<div class="card">
-<h3>PDF Arşivi</h3>
-<p>Buraya kaynak sistemi gelecek.</p>
-</div>
-`;
+function startTimer(){
+if(!interval){
+interval=setInterval(()=>{
+timerSeconds++;
+localStorage.setItem("timerSeconds",timerSeconds);
+renderTimer();
+},1000);
+}
 }
 
-if(tab==="profile"){
-content.innerHTML=`
-<div class="card">
-<h3>Profil</h3>
-<p>Buraya kullanıcı sistemi gelecek.</p>
-</div>
-`;
+function pauseTimer(){
+clearInterval(interval);
+interval=null;
+dailyMinutes+=Math.floor(timerSeconds/60);
+localStorage.setItem("dailyMinutes",dailyMinutes);
+timerSeconds=0;
+localStorage.setItem("timerSeconds",0);
+renderTimer();
 }
+
+function resetTimer(){
+clearInterval(interval);
+interval=null;
+timerSeconds=0;
+localStorage.setItem("timerSeconds",0);
+renderTimer();
 }
+
+function formatTime(sec){
+let h=Math.floor(sec/3600);
+let m=Math.floor((sec%3600)/60);
+let s=sec%60;
+return pad(h)+":"+pad(m)+":"+pad(s);
+}
+function pad(n){return n<10?"0"+n:n;}
+
+/* INITIAL LOAD */
+renderHome();
+
 </script>
 
 </body>
