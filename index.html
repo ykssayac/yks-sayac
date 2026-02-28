@@ -9,13 +9,10 @@
 
 <style>
 :root{
+--blue:#1e3a8a;
+--aqua:#06b6d4;
 --bg:#f8fafc;
---card:#ffffff;
---accent1:#4f46e5;
---accent2:#7c3aed;
 --text:#0f172a;
---muted:#64748b;
---radius:18px;
 }
 
 *{
@@ -28,294 +25,151 @@ font-family:'Inter',sans-serif;
 body{
 background:var(--bg);
 color:var(--text);
-display:flex;
-min-height:100vh;
+overflow-x:hidden;
 }
 
-/* SIDEBAR */
-.sidebar{
-width:240px;
-background:white;
-padding:30px 20px;
-box-shadow:0 10px 40px rgba(0,0,0,0.05);
+/* HERO */
+.hero{
+min-height:100vh;
 display:flex;
 flex-direction:column;
-}
-
-.logo{
-font-size:22px;
-font-weight:800;
-margin-bottom:40px;
-background:linear-gradient(90deg,var(--accent1),var(--accent2));
--webkit-background-clip:text;
--webkit-text-fill-color:transparent;
-}
-
-.nav-item{
-padding:12px 14px;
-border-radius:12px;
-margin-bottom:8px;
-cursor:pointer;
-transition:0.25s;
-color:var(--muted);
-font-weight:500;
-}
-
-.nav-item.active,
-.nav-item:hover{
-background:linear-gradient(90deg,var(--accent1),var(--accent2));
-color:white;
-}
-
-/* MAIN */
-.main{
-flex:1;
-padding:50px;
-animation:fade 0.4s ease;
-}
-
-/* HEADER */
-.topbar{
-display:flex;
-justify-content:space-between;
+justify-content:center;
 align-items:center;
+text-align:center;
+padding:40px;
+background:linear-gradient(135deg,var(--blue),var(--aqua));
+color:white;
+position:relative;
+overflow:hidden;
+}
+
+/* Glow circles */
+.hero::before,
+.hero::after{
+content:"";
+position:absolute;
+width:500px;
+height:500px;
+background:radial-gradient(circle, rgba(255,255,255,0.15), transparent 70%);
+border-radius:50%;
+animation:float 8s ease-in-out infinite;
+}
+
+.hero::before{top:-150px;left:-150px;}
+.hero::after{bottom:-150px;right:-150px;}
+
+@keyframes float{
+0%,100%{transform:translateY(0);}
+50%{transform:translateY(30px);}
+}
+
+.hero h1{
+font-size:48px;
+font-weight:800;
+margin-bottom:20px;
+}
+
+.hero p{
+font-size:18px;
+max-width:600px;
+opacity:0.9;
 margin-bottom:40px;
 }
 
-.topbar h1{
-font-size:26px;
-font-weight:800;
-}
-
-.user-pill{
-padding:8px 14px;
-border-radius:30px;
-background:linear-gradient(90deg,var(--accent1),var(--accent2));
-color:white;
-font-size:14px;
-}
-
-/* GRID */
-.grid{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
-gap:25px;
-}
-
-/* CARD */
-.card{
-background:var(--card);
-padding:30px;
-border-radius:var(--radius);
-box-shadow:0 20px 40px rgba(0,0,0,0.05);
-transition:0.25s;
-}
-
-.card:hover{
-transform:translateY(-4px);
-box-shadow:0 25px 50px rgba(0,0,0,0.08);
-}
-
-.label{
-font-size:13px;
-color:var(--muted);
-margin-bottom:8px;
-}
-
-.big{
-font-size:38px;
-font-weight:800;
-}
-
-button{
-margin-top:15px;
-padding:12px 18px;
+.cta{
+padding:14px 28px;
 border:none;
-border-radius:12px;
-cursor:pointer;
-background:linear-gradient(90deg,var(--accent1),var(--accent2));
-color:white;
+border-radius:40px;
 font-weight:600;
-transition:0.25s;
+cursor:pointer;
+background:white;
+color:var(--blue);
+transition:0.3s;
 }
 
-button:hover{
-transform:translateY(-2px);
-box-shadow:0 10px 20px rgba(79,70,229,0.3);
+.cta:hover{
+transform:translateY(-3px);
+box-shadow:0 10px 30px rgba(0,0,0,0.3);
 }
 
-input{
-width:100%;
-padding:12px;
-margin-top:10px;
-border-radius:10px;
-border:1px solid #e2e8f0;
-outline:none;
+/* SECTION */
+.section{
+padding:100px 20px;
+text-align:center;
 }
 
-input:focus{
-border-color:var(--accent1);
+.section h2{
+font-size:32px;
+margin-bottom:20px;
 }
 
-/* ANIM */
-@keyframes fade{
-from{opacity:0;transform:translateY(10px);}
+.section p{
+max-width:600px;
+margin:auto;
+color:#475569;
+}
+
+/* Fake dashboard */
+.preview{
+margin-top:60px;
+display:flex;
+justify-content:center;
+}
+
+.mockup{
+width:90%;
+max-width:800px;
+background:white;
+border-radius:20px;
+padding:30px;
+box-shadow:0 30px 60px rgba(0,0,0,0.1);
+animation:fadeUp 1s ease;
+}
+
+.stat{
+display:inline-block;
+width:45%;
+margin:2%;
+padding:20px;
+background:#f1f5f9;
+border-radius:15px;
+font-size:24px;
+font-weight:700;
+color:var(--blue);
+}
+
+@keyframes fadeUp{
+from{opacity:0;transform:translateY(40px);}
 to{opacity:1;transform:translateY(0);}
 }
 
-/* MOBILE */
-@media(max-width:900px){
-.sidebar{display:none;}
-body{flex-direction:column;}
-.main{padding:25px;}
-.mobile-nav{
-position:fixed;
-bottom:0;
-left:0;
-right:0;
-background:white;
-display:flex;
-justify-content:space-around;
-padding:12px;
-box-shadow:0 -10px 30px rgba(0,0,0,0.05);
-}
-.mobile-nav div{
-font-size:14px;
-color:var(--muted);
-}
-.mobile-nav div.active{
-color:var(--accent1);
-font-weight:600;
-}
+/* Responsive */
+@media(max-width:768px){
+.hero h1{font-size:32px;}
+.stat{width:100%;margin-bottom:15px;}
 }
 </style>
 </head>
 <body>
 
-<div class="sidebar">
-<div class="logo">NetLab</div>
-<div class="nav-item active" onclick="switchTab('home',this)">Dashboard</div>
-<div class="nav-item" onclick="switchTab('net',this)">Net</div>
-<div class="nav-item" onclick="switchTab('timer',this)">Süre</div>
+<div class="hero">
+<h1>Netlerini Kontrol Altına Al.</h1>
+<p>NetLab ile çalışma süreni, hedeflerini ve ilerlemeni tek bir modern panelden yönet.</p>
+<button class="cta">Hemen Başla</button>
 </div>
 
-<div class="main" id="content">
+<div class="section">
+<h2>Gerçek Zamanlı Takip</h2>
+<p>Net hesaplama, çalışma süresi ve hedef ilerlemesini tek bir yerde gör.</p>
 
-<div class="topbar">
-<h1>Dashboard</h1>
-<div class="user-pill">Ege</div>
-</div>
-
-<div class="grid">
-<div class="card">
-<div class="label">Bugünkü Net</div>
-<div class="big" id="netValue">0</div>
-</div>
-
-<div class="card">
-<div class="label">Çalışma Süresi</div>
-<div class="big" id="timeValue">0 dk</div>
+<div class="preview">
+<div class="mockup">
+<div class="stat">Net: 72.5</div>
+<div class="stat">Süre: 2s 45dk</div>
 </div>
 </div>
 
 </div>
-
-<div class="mobile-nav">
-<div class="active" onclick="mobileSwitch('home',this)">🏠</div>
-<div onclick="mobileSwitch('net',this)">📊</div>
-<div onclick="mobileSwitch('timer',this)">⏱</div>
-</div>
-
-<script>
-let net=0;
-let seconds=0;
-let daily=0;
-let interval=null;
-
-function switchTab(tab,el){
-document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
-el.classList.add('active');
-render(tab);
-}
-
-function mobileSwitch(tab,el){
-document.querySelectorAll('.mobile-nav div').forEach(n=>n.classList.remove('active'));
-el.classList.add('active');
-render(tab);
-}
-
-function render(tab){
-if(tab==="home"){
-content.innerHTML=`
-<div class="topbar">
-<h1>Dashboard</h1>
-<div class="user-pill">Ege</div>
-</div>
-<div class="grid">
-<div class="card">
-<div class="label">Bugünkü Net</div>
-<div class="big">${net.toFixed(2)}</div>
-</div>
-<div class="card">
-<div class="label">Çalışma Süresi</div>
-<div class="big">${daily} dk</div>
-</div>
-</div>
-`;
-}
-
-if(tab==="net"){
-content.innerHTML=`
-<div class="topbar"><h1>Net Hesaplama</h1></div>
-<div class="card">
-<input type="number" id="d" placeholder="Doğru">
-<input type="number" id="y" placeholder="Yanlış">
-<button onclick="calc()">Hesapla</button>
-<div class="big" style="margin-top:20px;">${net.toFixed(2)}</div>
-</div>
-`;
-}
-
-if(tab==="timer"){
-content.innerHTML=`
-<div class="topbar"><h1>Kronometre</h1></div>
-<div class="card">
-<div class="big">${format(seconds)}</div>
-<button onclick="start()">Başlat</button>
-<button onclick="pause()">Duraklat</button>
-</div>
-`;
-}
-}
-
-function calc(){
-let d=parseFloat(document.getElementById("d").value)||0;
-let y=parseFloat(document.getElementById("y").value)||0;
-net=d-(y/4);
-render("net");
-}
-
-function start(){
-if(!interval){
-interval=setInterval(()=>{
-seconds++;
-daily=Math.floor(seconds/60);
-render("timer");
-},1000);
-}
-}
-
-function pause(){
-clearInterval(interval);
-interval=null;
-}
-
-function format(s){
-let m=Math.floor(s/60);
-let ss=s%60;
-return m+":"+(ss<10?"0"+ss:ss);
-}
-</script>
 
 </body>
 </html>
