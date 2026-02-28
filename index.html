@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>NetLab</title>
-
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
 
 <style>
@@ -18,31 +17,15 @@
 --radius:20px;
 }
 
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:'Inter',sans-serif;
-}
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif;}
 
-body{
-background:var(--bg);
-color:var(--text);
-overflow-x:hidden;
-}
+body{background:var(--bg);color:var(--text);}
 
-/* PAGE SYSTEM */
-.page{
-display:none;
-animation:fade 0.5s ease;
-}
-
-.page.active{
-display:block;
-}
+.page{display:none;animation:fade 0.4s ease;}
+.page.active{display:block;}
 
 @keyframes fade{
-from{opacity:0;transform:translateY(15px);}
+from{opacity:0;transform:translateY(10px);}
 to{opacity:1;transform:translateY(0);}
 }
 
@@ -59,40 +42,19 @@ background:linear-gradient(135deg,var(--blue),var(--aqua));
 color:white;
 }
 
-.hero h1{
-font-size:52px;
-font-weight:800;
-margin-bottom:20px;
-}
-
-.hero p{
-max-width:600px;
-opacity:0.9;
-margin-bottom:35px;
-}
-
+.hero h1{font-size:48px;margin-bottom:20px;}
 .cta{
-padding:14px 32px;
+padding:14px 30px;
 border:none;
 border-radius:40px;
 background:white;
 color:var(--blue);
 font-weight:600;
 cursor:pointer;
-transition:0.3s;
-}
-
-.cta:hover{
-transform:translateY(-3px);
-box-shadow:0 10px 25px rgba(0,0,0,0.3);
 }
 
 /* APP */
-.app{
-max-width:1200px;
-margin:auto;
-padding:50px 30px;
-}
+.app{max-width:1200px;margin:auto;padding:40px;}
 
 .topbar{
 display:flex;
@@ -109,15 +71,6 @@ background:linear-gradient(90deg,var(--blue),var(--aqua));
 -webkit-text-fill-color:transparent;
 }
 
-.logout{
-padding:8px 16px;
-border-radius:30px;
-border:none;
-background:linear-gradient(90deg,var(--blue),var(--aqua));
-color:white;
-cursor:pointer;
-}
-
 .grid{
 display:grid;
 grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
@@ -129,46 +82,43 @@ background:var(--card);
 padding:30px;
 border-radius:var(--radius);
 box-shadow:0 15px 40px rgba(0,0,0,0.05);
-transition:0.3s;
 }
 
-.card:hover{
-transform:translateY(-5px);
-box-shadow:0 25px 60px rgba(0,0,0,0.08);
+.label{font-size:14px;color:var(--muted);margin-bottom:10px;}
+.big{font-size:38px;font-weight:800;}
+
+input{
+width:100%;
+padding:10px;
+margin-top:10px;
+border-radius:10px;
+border:1px solid #ddd;
 }
 
-.label{
-font-size:14px;
-color:var(--muted);
-margin-bottom:10px;
-}
-
-.big{
-font-size:44px;
-font-weight:800;
-}
-
-.primary{
-margin-top:20px;
-padding:12px 20px;
+button.primary{
+margin-top:15px;
+padding:10px 15px;
 border:none;
-border-radius:12px;
+border-radius:10px;
 cursor:pointer;
 background:linear-gradient(90deg,var(--blue),var(--aqua));
 color:white;
 font-weight:600;
-transition:0.3s;
 }
 
-.primary:hover{
-transform:translateY(-2px);
-box-shadow:0 10px 25px rgba(30,58,138,0.3);
+.progress{
+height:8px;
+background:#e2e8f0;
+border-radius:20px;
+margin-top:15px;
+overflow:hidden;
 }
 
-/* Responsive */
-@media(max-width:768px){
-.hero h1{font-size:34px;}
-.app{padding:25px;}
+.progress-bar{
+height:100%;
+background:linear-gradient(90deg,var(--blue),var(--aqua));
+width:0%;
+transition:0.5s;
 }
 </style>
 </head>
@@ -178,7 +128,6 @@ box-shadow:0 10px 25px rgba(30,58,138,0.3);
 <div id="landing" class="page active">
 <div class="hero">
 <h1>Netlerini Kontrol Altına Al.</h1>
-<p>Çalışma süreni ve ilerlemeni modern bir panelden yönet.</p>
 <button class="cta" onclick="goApp()">Hemen Başla</button>
 </div>
 </div>
@@ -186,18 +135,38 @@ box-shadow:0 10px 25px rgba(30,58,138,0.3);
 <!-- APP -->
 <div id="app" class="page">
 <div class="app">
+
 <div class="topbar">
 <div class="logo">NetLab</div>
-<button class="logout" onclick="goLanding()">Çıkış</button>
+<button onclick="goLanding()">Çıkış</button>
 </div>
 
 <div class="grid">
 
+<!-- NET -->
 <div class="card">
-<div class="label">Bugünkü Net</div>
+<div class="label">Net Hesapla</div>
+<input type="number" id="dogru" placeholder="Doğru">
+<input type="number" id="yanlis" placeholder="Yanlış">
+<button class="primary" onclick="calculateNet()">Hesapla</button>
 <div class="big" id="netValue">0</div>
 </div>
 
+<!-- HEDEF -->
+<div class="card">
+<div class="label">Hedef Net</div>
+<input type="number" id="targetInput" placeholder="Hedef">
+<button class="primary" onclick="setTarget()">Kaydet</button>
+<div class="progress"><div class="progress-bar" id="progressBar"></div></div>
+</div>
+
+<!-- YKS COUNTDOWN -->
+<div class="card">
+<div class="label">YKS 2026 Geri Sayım</div>
+<div class="big" id="countdown">Yükleniyor...</div>
+</div>
+
+<!-- TIMER -->
 <div class="card">
 <div class="label">Çalışma Süresi</div>
 <div class="big" id="timeValue">0 dk</div>
@@ -206,65 +175,82 @@ box-shadow:0 10px 25px rgba(30,58,138,0.3);
 </div>
 
 </div>
-
 </div>
 </div>
 
 <script>
-let net = 72.5;
-let seconds = 0;
-let interval = null;
-let animated = false;
 
 /* ROUTER */
 function goApp(){
-document.getElementById("landing").classList.remove("active");
-document.getElementById("app").classList.add("active");
-
-if(!animated){
-animateNumber("netValue",0,net,1200);
-animated = true;
+landing.classList.remove("active");
+app.classList.add("active");
 }
-}
-
 function goLanding(){
-document.getElementById("app").classList.remove("active");
-document.getElementById("landing").classList.add("active");
+app.classList.remove("active");
+landing.classList.add("active");
 }
 
-/* ANIMATED COUNTER (STABLE) */
-function animateNumber(id, start, end, duration) {
-const element = document.getElementById(id);
-const startTime = performance.now();
+/* STATE */
+let net=parseFloat(localStorage.getItem("net"))||0;
+let target=parseFloat(localStorage.getItem("target"))||0;
+let seconds=parseInt(localStorage.getItem("seconds"))||0;
+let interval=null;
 
-function update(currentTime) {
-const progress = Math.min((currentTime - startTime) / duration, 1);
-const value = start + (end - start) * progress;
-element.innerHTML = value.toFixed(1);
+document.getElementById("netValue").innerText=net;
 
-if (progress < 1) {
-requestAnimationFrame(update);
+/* NET */
+function calculateNet(){
+let d=parseFloat(dogru.value)||0;
+let y=parseFloat(yanlis.value)||0;
+net=d-(y/4);
+localStorage.setItem("net",net);
+netValue.innerText=net.toFixed(2);
+updateProgress();
+}
+
+function setTarget(){
+target=parseFloat(targetInput.value)||0;
+localStorage.setItem("target",target);
+updateProgress();
+}
+
+function updateProgress(){
+if(target>0){
+let percent=(net/target)*100;
+progressBar.style.width=Math.min(percent,100)+"%";
 }
 }
 
-requestAnimationFrame(update);
+/* COUNTDOWN */
+const targetDate=new Date("June 20, 2026 09:00:00").getTime();
+setInterval(()=>{
+const now=new Date().getTime();
+const diff=targetDate-now;
+if(diff>0){
+const days=Math.floor(diff/(1000*60*60*24));
+countdown.innerText=days+" Gün";
 }
+},1000);
 
 /* TIMER */
 function startTimer(){
 if(!interval){
-interval = setInterval(()=>{
+interval=setInterval(()=>{
 seconds++;
-document.getElementById("timeValue").innerHTML =
-Math.floor(seconds/60) + " dk";
+localStorage.setItem("seconds",seconds);
+timeValue.innerText=Math.floor(seconds/60)+" dk";
 },1000);
 }
 }
 
 function pauseTimer(){
 clearInterval(interval);
-interval = null;
+interval=null;
 }
+
+updateProgress();
+timeValue.innerText=Math.floor(seconds/60)+" dk";
+
 </script>
 
 </body>
