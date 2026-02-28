@@ -9,10 +9,12 @@
 
 <style>
 :root{
---bg:#0c0c0f;
---card:#141418;
---accent:#A3FF12;
---muted:#7a7a85;
+--bg:#f5f7fb;
+--card:#ffffff;
+--accent1:#4f46e5;
+--accent2:#7c3aed;
+--text:#111827;
+--muted:#6b7280;
 }
 
 *{
@@ -24,263 +26,220 @@ font-family:'Inter',sans-serif;
 
 body{
 background:var(--bg);
-color:white;
-height:100vh;
+color:var(--text);
+display:flex;
+min-height:100vh;
+}
+
+/* SIDEBAR */
+.sidebar{
+width:230px;
+background:white;
+padding:30px 20px;
+box-shadow:0 4px 20px rgba(0,0,0,0.05);
 display:flex;
 flex-direction:column;
 }
 
-/* HEADER */
-.header{
-padding:30px 24px 10px;
-font-size:28px;
+.logo{
+font-size:22px;
 font-weight:800;
-letter-spacing:2px;
+margin-bottom:40px;
+background:linear-gradient(90deg,var(--accent1),var(--accent2));
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
 }
 
-/* CONTENT */
-.content{
+.nav-item{
+padding:12px 14px;
+border-radius:12px;
+margin-bottom:10px;
+cursor:pointer;
+transition:0.2s;
+color:var(--muted);
+}
+
+.nav-item.active,
+.nav-item:hover{
+background:linear-gradient(90deg,var(--accent1),var(--accent2));
+color:white;
+}
+
+/* MAIN */
+.main{
 flex:1;
-overflow-y:auto;
-padding:20px;
-padding-bottom:120px;
+padding:40px;
+transition:0.3s ease;
 }
 
-/* CARD */
-.card{
+.section{
 background:var(--card);
-border-radius:28px;
-padding:24px;
-margin-bottom:22px;
+padding:30px;
+border-radius:20px;
+box-shadow:0 10px 25px rgba(0,0,0,0.04);
+margin-bottom:25px;
+animation:fadeIn 0.3s ease;
 }
 
-/* TYPO */
-.label{
-font-size:13px;
+.title{
+font-size:14px;
 color:var(--muted);
 margin-bottom:10px;
-letter-spacing:1px;
 }
 
 .big{
-font-size:46px;
+font-size:36px;
 font-weight:800;
-letter-spacing:1px;
 }
 
-/* INPUT */
-input{
-width:100%;
-padding:14px;
-margin-top:12px;
-border-radius:18px;
-border:1px solid #1f1f25;
-background:#0f0f13;
-color:white;
-font-size:16px;
-outline:none;
-}
-
-input:focus{
-border:1px solid var(--accent);
-}
-
-/* BUTTON */
 button{
-width:100%;
-padding:16px;
-margin-top:16px;
-border-radius:18px;
-border:1px solid var(--accent);
-background:transparent;
-color:var(--accent);
-font-weight:600;
-font-size:16px;
+margin-top:15px;
+padding:12px 20px;
+border:none;
+border-radius:12px;
 cursor:pointer;
+background:linear-gradient(90deg,var(--accent1),var(--accent2));
+color:white;
+font-weight:600;
 transition:0.2s;
 }
 
 button:hover{
-background:var(--accent);
-color:black;
-box-shadow:0 0 20px var(--accent);
+transform:translateY(-2px);
+box-shadow:0 6px 15px rgba(79,70,229,0.3);
 }
 
-/* PROGRESS */
-.progress{
-height:8px;
-background:#0f0f13;
-border-radius:20px;
-margin-top:22px;
-overflow:hidden;
+input{
+width:100%;
+padding:12px;
+margin-top:10px;
+border-radius:10px;
+border:1px solid #e5e7eb;
+outline:none;
 }
 
-.progress-bar{
-height:100%;
-background:var(--accent);
-width:0%;
-transition:0.4s;
-box-shadow:0 0 12px var(--accent);
+input:focus{
+border-color:var(--accent1);
 }
 
-/* NAV */
-.nav{
+@keyframes fadeIn{
+from{opacity:0;transform:translateY(10px);}
+to{opacity:1;transform:translateY(0);}
+}
+
+/* MOBILE */
+@media(max-width:900px){
+.sidebar{
+display:none;
+}
+body{
+flex-direction:column;
+}
+.main{
+padding:20px;
+}
+.mobile-nav{
 position:fixed;
 bottom:0;
 left:0;
 right:0;
-height:95px;
-background:#101014;
+background:white;
 display:flex;
 justify-content:space-around;
-align-items:center;
-border-top:1px solid #1f1f25;
+padding:10px;
+box-shadow:0 -5px 20px rgba(0,0,0,0.05);
 }
-
-.nav-item{
-flex:1;
-text-align:center;
-font-size:13px;
+.mobile-nav div{
+font-size:14px;
 color:var(--muted);
-cursor:pointer;
-transition:0.2s;
 }
-
-.nav-item span{
-display:block;
-font-size:24px;
-margin-bottom:6px;
+.mobile-nav div.active{
+color:var(--accent1);
+font-weight:600;
 }
-
-.nav-item.active{
-color:var(--accent);
-text-shadow:0 0 12px var(--accent);
 }
 </style>
 </head>
 <body>
 
-<div class="header">
-NetLab
+<div class="sidebar">
+<div class="logo">NetLab</div>
+<div class="nav-item active" onclick="switchTab('home',this)">Dashboard</div>
+<div class="nav-item" onclick="switchTab('net',this)">Net</div>
+<div class="nav-item" onclick="switchTab('timer',this)">Süre</div>
 </div>
 
-<div class="content" id="app"></div>
+<div class="main" id="content"></div>
 
-<div class="nav">
-<div class="nav-item active" onclick="switchTab('home',this)">
-<span>🏠</span>Ana
-</div>
-<div class="nav-item" onclick="switchTab('net',this)">
-<span>📊</span>Net
-</div>
-<div class="nav-item" onclick="switchTab('timer',this)">
-<span>⏱</span>Süre
-</div>
+<div class="mobile-nav">
+<div class="active" onclick="mobileSwitch('home',this)">🏠</div>
+<div onclick="mobileSwitch('net',this)">📊</div>
+<div onclick="mobileSwitch('timer',this)">⏱</div>
 </div>
 
 <script>
-
-/* STATE */
-let net=parseFloat(localStorage.getItem("net"))||0;
-let target=parseFloat(localStorage.getItem("target"))||0;
-let seconds=parseInt(localStorage.getItem("seconds"))||0;
-let daily=parseInt(localStorage.getItem("daily"))||0;
+let net=0;
+let seconds=0;
 let interval=null;
 
-/* NAV */
 function switchTab(tab,el){
-document.querySelectorAll(".nav-item").forEach(n=>n.classList.remove("active"));
-el.classList.add("active");
-
-if(tab==="home") renderHome();
-if(tab==="net") renderNet();
-if(tab==="timer") renderTimer();
+document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+el.classList.add('active');
+render(tab);
 }
 
-/* HOME */
-function renderHome(){
-app.innerHTML=`
-<div class="card">
-<div class="label">Bugünkü Net</div>
-<div class="big">${net.toFixed(2)}</div>
-</div>
+function mobileSwitch(tab,el){
+document.querySelectorAll('.mobile-nav div').forEach(n=>n.classList.remove('active'));
+el.classList.add('active');
+render(tab);
+}
 
-<div class="card">
-<div class="label">Bugünkü Çalışma</div>
-<div class="big">${daily} dk</div>
+function render(tab){
+if(tab==="home"){
+content.innerHTML=`
+<div class="section">
+<div class="title">Bugünkü Net</div>
+<div class="big">${net.toFixed(2)}</div>
 </div>
 `;
 }
 
-/* NET */
-function renderNet(){
-app.innerHTML=`
-<div class="card">
-<div class="label">Net Hesapla</div>
+if(tab==="net"){
+content.innerHTML=`
+<div class="section">
+<div class="title">Net Hesaplama</div>
 <input type="number" id="d" placeholder="Doğru">
 <input type="number" id="y" placeholder="Yanlış">
 <button onclick="calc()">Hesapla</button>
 <div class="big">${net.toFixed(2)}</div>
 </div>
+`;
+}
 
-<div class="card">
-<div class="label">Hedef Net</div>
-<input type="number" id="t" placeholder="Hedef">
-<button onclick="setTarget()">Kaydet</button>
-<div class="progress">
-<div class="progress-bar" id="bar"></div>
-</div>
+if(tab==="timer"){
+content.innerHTML=`
+<div class="section">
+<div class="title">Kronometre</div>
+<div class="big">${format(seconds)}</div>
+<button onclick="start()">Başlat</button>
+<button onclick="pause()">Duraklat</button>
 </div>
 `;
-updateBar();
+}
 }
 
 function calc(){
 let d=parseFloat(document.getElementById("d").value)||0;
 let y=parseFloat(document.getElementById("y").value)||0;
 net=d-(y/4);
-localStorage.setItem("net",net);
-renderNet();
-}
-
-function setTarget(){
-target=parseFloat(document.getElementById("t").value)||0;
-localStorage.setItem("target",target);
-updateBar();
-}
-
-function updateBar(){
-if(target>0){
-let percent=(net/target)*100;
-document.getElementById("bar").style.width=
-Math.min(percent,100)+"%";
-}
-}
-
-/* TIMER */
-function renderTimer(){
-app.innerHTML=`
-<div class="card">
-<div class="label">Kronometre</div>
-<div class="big" style="text-shadow:0 0 15px var(--accent);">${format(seconds)}</div>
-<button onclick="start()">Başlat</button>
-<button onclick="pause()">Duraklat</button>
-<button onclick="reset()">Sıfırla</button>
-</div>
-
-<div class="card">
-<div class="label">Bugün Toplam</div>
-<div class="big">${daily} dk</div>
-</div>
-`;
+render("net");
 }
 
 function start(){
 if(!interval){
 interval=setInterval(()=>{
 seconds++;
-localStorage.setItem("seconds",seconds);
-renderTimer();
+render("timer");
 },1000);
 }
 }
@@ -288,31 +247,15 @@ renderTimer();
 function pause(){
 clearInterval(interval);
 interval=null;
-daily+=Math.floor(seconds/60);
-localStorage.setItem("daily",daily);
-seconds=0;
-localStorage.setItem("seconds",0);
-renderTimer();
-}
-
-function reset(){
-clearInterval(interval);
-interval=null;
-seconds=0;
-localStorage.setItem("seconds",0);
-renderTimer();
 }
 
 function format(s){
-let h=Math.floor(s/3600);
-let m=Math.floor((s%3600)/60);
+let m=Math.floor(s/60);
 let ss=s%60;
-return pad(h)+":"+pad(m)+":"+pad(ss);
+return m+":"+ (ss<10?"0"+ss:ss);
 }
-function pad(n){return n<10?"0"+n:n;}
 
-renderHome();
-
+render("home");
 </script>
 
 </body>
