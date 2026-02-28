@@ -13,6 +13,7 @@
 --aqua:#06b6d4;
 --bg:#f8fafc;
 --text:#0f172a;
+--card:#ffffff;
 }
 
 *{
@@ -28,6 +29,21 @@ color:var(--text);
 overflow-x:hidden;
 }
 
+/* TRANSITION */
+.page{
+display:none;
+animation:fade 0.6s ease;
+}
+
+.active{
+display:block;
+}
+
+@keyframes fade{
+from{opacity:0;transform:translateY(20px);}
+to{opacity:1;transform:translateY(0);}
+}
+
 /* HERO */
 .hero{
 min-height:100vh;
@@ -39,41 +55,11 @@ text-align:center;
 padding:40px;
 background:linear-gradient(135deg,var(--blue),var(--aqua));
 color:white;
-position:relative;
-overflow:hidden;
-}
-
-/* Glow circles */
-.hero::before,
-.hero::after{
-content:"";
-position:absolute;
-width:500px;
-height:500px;
-background:radial-gradient(circle, rgba(255,255,255,0.15), transparent 70%);
-border-radius:50%;
-animation:float 8s ease-in-out infinite;
-}
-
-.hero::before{top:-150px;left:-150px;}
-.hero::after{bottom:-150px;right:-150px;}
-
-@keyframes float{
-0%,100%{transform:translateY(0);}
-50%{transform:translateY(30px);}
 }
 
 .hero h1{
 font-size:48px;
-font-weight:800;
 margin-bottom:20px;
-}
-
-.hero p{
-font-size:18px;
-max-width:600px;
-opacity:0.9;
-margin-bottom:40px;
 }
 
 .cta{
@@ -92,84 +78,155 @@ transform:translateY(-3px);
 box-shadow:0 10px 30px rgba(0,0,0,0.3);
 }
 
-/* SECTION */
-.section{
-padding:100px 20px;
-text-align:center;
-}
-
-.section h2{
-font-size:32px;
-margin-bottom:20px;
-}
-
-.section p{
-max-width:600px;
+/* APP */
+.app{
+padding:40px;
+max-width:1200px;
 margin:auto;
-color:#475569;
 }
 
-/* Fake dashboard */
-.preview{
-margin-top:60px;
+.topbar{
 display:flex;
-justify-content:center;
+justify-content:space-between;
+align-items:center;
+margin-bottom:40px;
 }
 
-.mockup{
-width:90%;
-max-width:800px;
-background:white;
-border-radius:20px;
+.logo{
+font-weight:800;
+font-size:22px;
+background:linear-gradient(90deg,var(--blue),var(--aqua));
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
+}
+
+.grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+gap:30px;
+}
+
+.card{
+background:var(--card);
 padding:30px;
-box-shadow:0 30px 60px rgba(0,0,0,0.1);
-animation:fadeUp 1s ease;
+border-radius:20px;
+box-shadow:0 20px 40px rgba(0,0,0,0.05);
+transition:0.3s;
 }
 
-.stat{
-display:inline-block;
-width:45%;
-margin:2%;
-padding:20px;
-background:#f1f5f9;
-border-radius:15px;
-font-size:24px;
-font-weight:700;
-color:var(--blue);
+.card:hover{
+transform:translateY(-6px);
+box-shadow:0 30px 60px rgba(0,0,0,0.08);
 }
 
-@keyframes fadeUp{
-from{opacity:0;transform:translateY(40px);}
-to{opacity:1;transform:translateY(0);}
+.label{
+font-size:14px;
+color:#64748b;
+margin-bottom:10px;
 }
 
-/* Responsive */
-@media(max-width:768px){
-.hero h1{font-size:32px;}
-.stat{width:100%;margin-bottom:15px;}
+.big{
+font-size:42px;
+font-weight:800;
+}
+
+button.primary{
+margin-top:15px;
+padding:12px 20px;
+border:none;
+border-radius:12px;
+cursor:pointer;
+background:linear-gradient(90deg,var(--blue),var(--aqua));
+color:white;
+font-weight:600;
+transition:0.3s;
+}
+
+button.primary:hover{
+transform:translateY(-2px);
+box-shadow:0 10px 20px rgba(30,58,138,0.3);
 }
 </style>
 </head>
 <body>
 
+<!-- LANDING -->
+<div id="landing" class="page active">
 <div class="hero">
 <h1>Netlerini Kontrol Altına Al.</h1>
-<p>NetLab ile çalışma süreni, hedeflerini ve ilerlemeni tek bir modern panelden yönet.</p>
-<button class="cta">Hemen Başla</button>
-</div>
-
-<div class="section">
-<h2>Gerçek Zamanlı Takip</h2>
-<p>Net hesaplama, çalışma süresi ve hedef ilerlemesini tek bir yerde gör.</p>
-
-<div class="preview">
-<div class="mockup">
-<div class="stat">Net: 72.5</div>
-<div class="stat">Süre: 2s 45dk</div>
+<p>Çalışma süreni ve netlerini tek panelden yönet.</p>
+<button class="cta" onclick="goApp()">Hemen Başla</button>
 </div>
 </div>
 
+<!-- APP -->
+<div id="app" class="page">
+<div class="app">
+<div class="topbar">
+<div class="logo">NetLab</div>
+<button class="primary" onclick="goLanding()">Çıkış</button>
 </div>
+
+<div class="grid">
+<div class="card">
+<div class="label">Bugünkü Net</div>
+<div class="big" id="netValue">0</div>
+</div>
+
+<div class="card">
+<div class="label">Çalışma Süresi</div>
+<div class="big" id="timeValue">0 dk</div>
+<button class="primary" onclick="startTimer()">Başlat</button>
+</div>
+</div>
+
+</div>
+</div>
+
+<script>
+let net=72.5;
+let seconds=0;
+let interval=null;
+
+/* ROUTER */
+function goApp(){
+document.getElementById("landing").classList.remove("active");
+document.getElementById("app").classList.add("active");
+animateNumber("netValue",0,net,1000);
+}
+
+function goLanding(){
+document.getElementById("app").classList.remove("active");
+document.getElementById("landing").classList.add("active");
+}
+
+/* ANIMATED NUMBER */
+function animateNumber(id,start,end,duration){
+let range=end-start;
+let current=start;
+let increment=end>start?1:-1;
+let stepTime=Math.abs(Math.floor(duration/range));
+let obj=document.getElementById(id);
+let timer=setInterval(function(){
+current+=increment;
+obj.innerHTML=current.toFixed(1);
+if(current==end){
+clearInterval(timer);
+}
+},stepTime);
+}
+
+/* TIMER */
+function startTimer(){
+if(!interval){
+interval=setInterval(()=>{
+seconds++;
+document.getElementById("timeValue").innerHTML=
+Math.floor(seconds/60)+" dk";
+},1000);
+}
+}
+</script>
 
 </body>
 </html>
