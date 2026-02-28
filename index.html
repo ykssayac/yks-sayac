@@ -9,12 +9,13 @@
 
 <style>
 :root{
---bg:#f5f7fb;
+--bg:#f8fafc;
 --card:#ffffff;
 --accent1:#4f46e5;
 --accent2:#7c3aed;
---text:#111827;
---muted:#6b7280;
+--text:#0f172a;
+--muted:#64748b;
+--radius:18px;
 }
 
 *{
@@ -33,10 +34,10 @@ min-height:100vh;
 
 /* SIDEBAR */
 .sidebar{
-width:230px;
+width:240px;
 background:white;
 padding:30px 20px;
-box-shadow:0 4px 20px rgba(0,0,0,0.05);
+box-shadow:0 10px 40px rgba(0,0,0,0.05);
 display:flex;
 flex-direction:column;
 }
@@ -53,10 +54,11 @@ background:linear-gradient(90deg,var(--accent1),var(--accent2));
 .nav-item{
 padding:12px 14px;
 border-radius:12px;
-margin-bottom:10px;
+margin-bottom:8px;
 cursor:pointer;
-transition:0.2s;
+transition:0.25s;
 color:var(--muted);
+font-weight:500;
 }
 
 .nav-item.active,
@@ -68,45 +70,78 @@ color:white;
 /* MAIN */
 .main{
 flex:1;
-padding:40px;
-transition:0.3s ease;
+padding:50px;
+animation:fade 0.4s ease;
 }
 
-.section{
+/* HEADER */
+.topbar{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:40px;
+}
+
+.topbar h1{
+font-size:26px;
+font-weight:800;
+}
+
+.user-pill{
+padding:8px 14px;
+border-radius:30px;
+background:linear-gradient(90deg,var(--accent1),var(--accent2));
+color:white;
+font-size:14px;
+}
+
+/* GRID */
+.grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+gap:25px;
+}
+
+/* CARD */
+.card{
 background:var(--card);
 padding:30px;
-border-radius:20px;
-box-shadow:0 10px 25px rgba(0,0,0,0.04);
-margin-bottom:25px;
-animation:fadeIn 0.3s ease;
+border-radius:var(--radius);
+box-shadow:0 20px 40px rgba(0,0,0,0.05);
+transition:0.25s;
 }
 
-.title{
-font-size:14px;
+.card:hover{
+transform:translateY(-4px);
+box-shadow:0 25px 50px rgba(0,0,0,0.08);
+}
+
+.label{
+font-size:13px;
 color:var(--muted);
-margin-bottom:10px;
+margin-bottom:8px;
 }
 
 .big{
-font-size:36px;
+font-size:38px;
 font-weight:800;
 }
 
 button{
 margin-top:15px;
-padding:12px 20px;
+padding:12px 18px;
 border:none;
 border-radius:12px;
 cursor:pointer;
 background:linear-gradient(90deg,var(--accent1),var(--accent2));
 color:white;
 font-weight:600;
-transition:0.2s;
+transition:0.25s;
 }
 
 button:hover{
 transform:translateY(-2px);
-box-shadow:0 6px 15px rgba(79,70,229,0.3);
+box-shadow:0 10px 20px rgba(79,70,229,0.3);
 }
 
 input{
@@ -114,7 +149,7 @@ width:100%;
 padding:12px;
 margin-top:10px;
 border-radius:10px;
-border:1px solid #e5e7eb;
+border:1px solid #e2e8f0;
 outline:none;
 }
 
@@ -122,22 +157,17 @@ input:focus{
 border-color:var(--accent1);
 }
 
-@keyframes fadeIn{
+/* ANIM */
+@keyframes fade{
 from{opacity:0;transform:translateY(10px);}
 to{opacity:1;transform:translateY(0);}
 }
 
 /* MOBILE */
 @media(max-width:900px){
-.sidebar{
-display:none;
-}
-body{
-flex-direction:column;
-}
-.main{
-padding:20px;
-}
+.sidebar{display:none;}
+body{flex-direction:column;}
+.main{padding:25px;}
 .mobile-nav{
 position:fixed;
 bottom:0;
@@ -146,8 +176,8 @@ right:0;
 background:white;
 display:flex;
 justify-content:space-around;
-padding:10px;
-box-shadow:0 -5px 20px rgba(0,0,0,0.05);
+padding:12px;
+box-shadow:0 -10px 30px rgba(0,0,0,0.05);
 }
 .mobile-nav div{
 font-size:14px;
@@ -169,7 +199,26 @@ font-weight:600;
 <div class="nav-item" onclick="switchTab('timer',this)">Süre</div>
 </div>
 
-<div class="main" id="content"></div>
+<div class="main" id="content">
+
+<div class="topbar">
+<h1>Dashboard</h1>
+<div class="user-pill">Ege</div>
+</div>
+
+<div class="grid">
+<div class="card">
+<div class="label">Bugünkü Net</div>
+<div class="big" id="netValue">0</div>
+</div>
+
+<div class="card">
+<div class="label">Çalışma Süresi</div>
+<div class="big" id="timeValue">0 dk</div>
+</div>
+</div>
+
+</div>
 
 <div class="mobile-nav">
 <div class="active" onclick="mobileSwitch('home',this)">🏠</div>
@@ -180,6 +229,7 @@ font-weight:600;
 <script>
 let net=0;
 let seconds=0;
+let daily=0;
 let interval=null;
 
 function switchTab(tab,el){
@@ -197,29 +247,39 @@ render(tab);
 function render(tab){
 if(tab==="home"){
 content.innerHTML=`
-<div class="section">
-<div class="title">Bugünkü Net</div>
+<div class="topbar">
+<h1>Dashboard</h1>
+<div class="user-pill">Ege</div>
+</div>
+<div class="grid">
+<div class="card">
+<div class="label">Bugünkü Net</div>
 <div class="big">${net.toFixed(2)}</div>
+</div>
+<div class="card">
+<div class="label">Çalışma Süresi</div>
+<div class="big">${daily} dk</div>
+</div>
 </div>
 `;
 }
 
 if(tab==="net"){
 content.innerHTML=`
-<div class="section">
-<div class="title">Net Hesaplama</div>
+<div class="topbar"><h1>Net Hesaplama</h1></div>
+<div class="card">
 <input type="number" id="d" placeholder="Doğru">
 <input type="number" id="y" placeholder="Yanlış">
 <button onclick="calc()">Hesapla</button>
-<div class="big">${net.toFixed(2)}</div>
+<div class="big" style="margin-top:20px;">${net.toFixed(2)}</div>
 </div>
 `;
 }
 
 if(tab==="timer"){
 content.innerHTML=`
-<div class="section">
-<div class="title">Kronometre</div>
+<div class="topbar"><h1>Kronometre</h1></div>
+<div class="card">
 <div class="big">${format(seconds)}</div>
 <button onclick="start()">Başlat</button>
 <button onclick="pause()">Duraklat</button>
@@ -239,6 +299,7 @@ function start(){
 if(!interval){
 interval=setInterval(()=>{
 seconds++;
+daily=Math.floor(seconds/60);
 render("timer");
 },1000);
 }
@@ -252,10 +313,8 @@ interval=null;
 function format(s){
 let m=Math.floor(s/60);
 let ss=s%60;
-return m+":"+ (ss<10?"0"+ss:ss);
+return m+":"+(ss<10?"0"+ss:ss);
 }
-
-render("home");
 </script>
 
 </body>
